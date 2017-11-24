@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>baner_test</title>
+<meta name="ad.size" content="{ADS_SIZE}">
+
+<!-- simplified loads by using the combined lib + MovieClip -->
+<!--
+<script src="https://s0.2mdn.net/ads/studio/cached_libs/easeljs_0.8.1_58add2e69ca7fbe25e8f82a2b5f6a510_min.js"></script>
+<script src="https://s0.2mdn.net/ads/studio/cached_libs/movieclip_0.8.1_927f07f1635e6a2a1aa76e79f9decf86_min.js"></script>
+<script src="https://s0.2mdn.net/ads/studio/cached_libs/preloadjs_0.6.1_ab03d7dc94f6d4fae428f99662cd5819_min.js"></script>
+<script src="https://s0.2mdn.net/ads/studio/cached_libs/soundjs_0.6.1_a28a519ed51a50384fc91fcf63f28e34_min.js"></script>
+<script src="https://s0.2mdn.net/ads/studio/cached_libs/tweenjs_0.6.1_40840f08e9fb382ae9e4a337da542ed5_min.js"></script> -->
+
+<script src="libs/easeljs-0.8.1.min.js"></script>
+<script src="libs/tweenjs-0.6.1.min.js"></script>
+<script src="libs/movieclip-0.8.1.min.js"></script>
+<script src="libs/preloadjs-0.6.1.min.js"></script>
+
+<!-- <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script> -->
+
+<script src="AdHelper.min.js"></script>
+<script src="baner_test.js"></script>
+<script src="clicktag.js"></script>
+
+<style type="text/css">
+body, html, a{
+	margin: 0;
+	display: block;
+}
+</style>
+
+<script>
+var canvas, stage, exportRoot;
+
+function init() {
+	canvas = document.getElementById("canvas");
+	images = images||{};
+
+	// check for CreateJS support, and show alternate content if necessary
+
+	if (!createjs.AdHelper.isSupported()) {
+		createjs.AdHelper.showAltImage(canvas, "banner_test.jpg", window.clickTag, "");
+		return; // don't bother continuing with anything else.
+	}
+
+	var loader = new createjs.LoadQueue(false);
+	loader.addEventListener("fileload", handleFileLoad);
+	loader.addEventListener("complete", handleComplete);
+	loader.loadManifest(lib.properties.manifest);
+}
+
+function handleFileLoad(evt) {
+	if (evt.item.type == "image") { images[evt.item.id] = evt.result; }
+}
+
+function handleComplete(evt) {
+	exportRoot = new lib.baner_test();
+
+	stage = new createjs.Stage(canvas);
+	stage.addChild(exportRoot);
+	stage.update();
+
+	createjs.Ticker.setFPS(lib.properties.fps);
+	createjs.Ticker.addEventListener("tick", stage);
+}
+</script>
+</head>
+
+<body onload="init();" style="background-color:#D4D4D4">
+	<canvas id="canvas" width="750" height="200" style="background-color:#FFFFFF"></canvas>
+</body>
+</html>
