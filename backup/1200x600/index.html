@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>{PROJECT_NAME}</title>
+    <meta name="ad.size" content="{AD_SIZE}">
+
+    <!--.-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+        rel="stylesheet">
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+
+    <script src="clicktag.js" inline></script>
+    <script src="main.js" inline></script>
+
+    <style>
+        body,
+        html,
+        a {
+            margin: 0;
+            padding: 0;
+            display: block;
+            overflow: hidden;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        #clicktag {
+            cursor: pointer;
+        }
+
+        text {
+            text-rendering: geometricPrecision;
+        }
+
+        .data-btn rect,
+        .data-btn path {
+            transition: 333ms;
+        }
+
+        .data-btn:hover path,
+        .data-btn:hover rect {
+            filter: brightness(1.3);
+        }
+
+        svg {
+            aspect-ratio: 1200/600;
+        }
+
+        .op0 {
+            opacity: 0;
+        }
+
+        /* .smog {
+            filter: url("#turbulence");
+        } */
+    </style>
+
+</head>
+
+<body onload="init();" style="background-color:#fefefe">
+    <a id="clicktag" onclick="window.open(window.clickTag, '_blank')">
+        <div id="canvas">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="1200" height="600"
+                viewBox="0 0 1200 200" preserveAspectRatio="xMinYMin meet">
+
+
+                <defs>
+                    <linearGradient id="a" y1="0.5" x2="1" y2="0.5" gradientUnits="objectBoundingBox">
+                        <stop offset="0" stop-color="#08b5f7" />
+                        <stop offset="0.004" stop-color="#08b5f7" />
+                        <stop offset="0.301" stop-color="#04a19b" />
+                        <stop offset="0.499" stop-color="#008c3e" />
+                        <stop offset="0.994" stop-color="#8cd900" />
+                        <stop offset="1" stop-color="#8cd900" />
+                    </linearGradient>
+                    <linearGradient id="b" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+                        <stop offset="0" stop-color="#bc26d1" />
+                        <stop offset="1" stop-color="#9f00af" />
+                    </linearGradient>
+                    <pattern id="c" width="1" height="1" viewBox="-68.093 0 1251 500">
+                        <image preserveAspectRatio="none" width="1251" height="500"
+                            xlink:href="Commercial%20Break%20XL%20%20WP%201200x600%20Desktop%20html-image.png" />
+                    </pattern>
+                    <clipPath id="d">
+                        <rect width="361.867" height="67.092" fill="none" />
+                    </clipPath>
+                    <clipPath id="f">
+                        <rect width="1000" height="11" fill="url(#a)" />
+                    </clipPath>
+                    <linearGradient id="g" x1="0.934" x2="0.318" xlink:href="#b" />
+                    <clipPath id="h">
+                        <rect width="275.007" height="83.188" fill="none" />
+                    </clipPath>
+                    <clipPath id="i">
+                        <path
+                            d="M59.649,19.443c-21.089,0-38.183,17.614-38.183,39.342s17.095,39.34,38.183,39.34H253.776c21.088,0,38.184-17.613,38.184-39.34s-17.1-39.342-38.184-39.342Z"
+                            transform="translate(-21.466 -19.443)" fill="url(#b)" />
+                    </clipPath>
+                    <clipPath id="l">
+                        <rect width="1200" height="600" />
+                    </clipPath>
+                </defs>
+                <g>
+                    <rect width="1200" height="600" fill="#fff" />
+                    <image width="1200" height="600" href="images/f.jpg" />
+
+                    <text transform="translate(17 527)" font-size="17" font-family="ArialMT, Arial">
+                        <tspan x="0" y="15">
+                            Promocja „Cashback” jest dostępna od 04.11 do 26.11.2024 r. dla Klienta, który w czasie
+                            trwania promocji zawrze umowę pożyczki
+                        </tspan>
+                        <tspan x="0" y="40">
+                            przez Internet o całkowitej kwocie pożyczki od 4000 zł do 30 000 zł spłacanej w 12, 18, 24,
+                            36, 44 lub 48 miesięcznych ratach.
+                        </tspan>
+                    </text>
+                    <g transform="translate(25 52.981)">
+                        <g transform="translate(0 -2)" clip-path="url(#d)">
+                            <path
+                                d="M155.869,6.1c-4.49-3.914-12.305-13.2-53.483,3.65,22.851,6.48,38.5,31.217,22.106,46.137l-.09.089C147.627,62.948,158.492,63,163.4,43.5c4.978-19.8-3.01-33.461-7.526-37.4"
+                                transform="translate(-48.72 0)" fill="#8cd900" />
+                            <path
+                                d="M34.438,33.182c-1.39-6.947,18.525-15.747,18.525-15.747.237-.1.468-.19.7-.287a41.13,41.13,0,0,0-12.86-1.566C11.745,16.741-.912,38.012.051,50.2.872,60.608,8.387,73.127,36.059,74.4c26.361,1.213,38.529-9.964,39.624-11.027-.356-.106-.706-.21-1.068-.32C50.648,55.759,35.827,40.129,34.438,33.182"
+                                transform="translate(0 -7.4)" fill="#08b5f7" />
+                            <path
+                                d="M106.973,64.735c16.393-14.92.745-39.657-22.106-46.137-.235.1-.465.189-.7.287,0,0-19.915,8.8-18.525,15.747S81.848,57.209,105.816,64.5c.362.111.711.214,1.068.32l.09-.088"
+                                transform="translate(-31.201 -8.85)" fill="#008c3e" />
+                            <path
+                                d="M278.522,40.627c0-4.067-2.888-6.66-8.9-6.66a51.209,51.209,0,0,0-5.245.295V47.994q2.3.177,5.3.177c6.365,0,8.84-3.183,8.84-7.544m6.955-.059c0,8.133-5.776,13.378-15.795,13.378-2,0-3.713-.059-5.3-.177V66.794a15.852,15.852,0,0,1-3.36.354,16.69,16.69,0,0,1-3.359-.354V29.43a50.581,50.581,0,0,1,11.787-1.3c11.2,0,16.03,5.009,16.03,12.435"
+                                transform="translate(-122.605 -13.387)" />
+                            <path
+                                d="M332.083,48.019a9.6,9.6,0,0,1-1.767,5.776,16.742,16.742,0,0,0-4.244-.53,10.837,10.837,0,0,0-5.245,1.12V75.836a15.833,15.833,0,0,1-3.359.295,16.175,16.175,0,0,1-3.359-.295V51.142A18.415,18.415,0,0,1,325.9,47.135a17.814,17.814,0,0,1,6.188.884"
+                                transform="translate(-149.466 -22.429)" />
+                            <path
+                                d="M368.852,61.873c0-5.363-3.065-9.076-8.074-9.076s-8.075,3.713-8.075,9.076c0,5.3,3.064,8.958,8.075,8.958s8.074-3.654,8.074-8.958m-22.867,0c0-8.663,6.306-14.851,14.91-14.851s14.674,6.129,14.674,14.851c0,8.6-6.305,14.792-14.91,14.792s-14.675-6.07-14.675-14.792"
+                                transform="translate(-164.634 -22.375)" />
+                            <path
+                                d="M430.051,48.961a104.762,104.762,0,0,1-10.844,27.463,14.877,14.877,0,0,1-3.182.3,15.976,15.976,0,0,1-3.3-.3c-5.127-8.545-8.309-17.209-10.961-27.463a18.2,18.2,0,0,1,4.6-.59,17.65,17.65,0,0,1,2.593.236,143.264,143.264,0,0,0,6.895,20.745,5.063,5.063,0,0,1,.294.884l.354-.884a132.413,132.413,0,0,0,6.719-20.745,17.634,17.634,0,0,1,2.593-.236,14.424,14.424,0,0,1,4.243.59"
+                                transform="translate(-191.176 -23.017)" />
+                            <path
+                                d="M461.024,65.029V37.153a16.165,16.165,0,0,1,3.359-.295,15.615,15.615,0,0,1,3.3.295V65.029a15.31,15.31,0,0,1-3.3.295,16.557,16.557,0,0,1-3.359-.295m-1-36.363a4.3,4.3,0,1,1,4.361,4.243,4.29,4.29,0,0,1-4.361-4.243"
+                                transform="translate(-218.898 -11.622)" />
+                            <path
+                                d="M501.9,60.639V44.962a9.842,9.842,0,0,0-5.422-1.238c-4.95,0-8.664,3.477-8.664,8.9,0,5.481,3.477,8.9,8.546,8.9a14.586,14.586,0,0,0,5.54-.884m6.659-32.886V64.588a27.7,27.7,0,0,1-12.081,2.769c-9.194,0-15.441-5.185-15.441-14.615,0-9.194,6.837-14.911,15.205-14.911a15.4,15.4,0,0,1,5.658.884V27.754a15.28,15.28,0,0,1,3.3-.295,16.537,16.537,0,0,1,3.36.295"
+                                transform="translate(-228.896 -13.066)" />
+                            <path
+                                d="M560.16,59.452c0-3.3-1.708-6.846-6.247-6.9-4.125,0-6.659,3.074-7.13,6.9Zm6.306,4.42H546.723c.531,4.6,3.359,7.239,8.015,7.239a13.082,13.082,0,0,0,8.251-2.888,6.9,6.9,0,0,1,2.888,4.538,17.872,17.872,0,0,1-11.61,3.948c-8.368,0-14.38-5.54-14.38-14.674,0-8.664,6.07-14.911,14.026-14.911,7.486,0,12.789,5.127,12.789,12.612a32.914,32.914,0,0,1-.236,4.136"
+                                transform="translate(-256.901 -22.424)" />
+                            <path
+                                d="M623.33,58.633v17.15a19.308,19.308,0,0,1-6.72,0V60.224c0-5.127-2.475-7.072-6.776-7.072a12.828,12.828,0,0,0-6.188,1.533v21.1a18.969,18.969,0,0,1-6.66,0V51.443a21.721,21.721,0,0,1,13.378-4.42c9.017,0,12.966,5.186,12.966,11.61"
+                                transform="translate(-284.071 -22.376)" />
+                            <path
+                                d="M673.313,67.716a12.731,12.731,0,0,1-8.368,3.005c-6.011,0-10.432-2.711-10.432-9.429V34.949a16.22,16.22,0,0,1,3.36-.295,14.777,14.777,0,0,1,3.242.295v7.426h10.431a10.179,10.179,0,0,1,.294,2.652,11.091,11.091,0,0,1-.294,2.77H661.114V59.761c0,4.125,1.945,5.186,4.714,5.186a7.238,7.238,0,0,0,4.656-1.886,7.015,7.015,0,0,1,2.829,4.656"
+                                transform="translate(-311.445 -16.49)" />
+                        </g>
+                    </g>
+                    <g transform="translate(0 480)">
+                        <rect width="1200" height="11" transform="translate(0 17)" fill="url(#a)" />
+
+                    </g>
+                    <g class="data-btn" transform="translate(216.878 3361.766)">
+                        <rect width="288.122" height="82.577" rx="41" transform="translate(671 -2998.787)"
+                            fill="url(#g)" />
+                        <g transform="translate(672.37 -2998.954)">
+                            <g clip-path="url(#h)">
+                                <g clip-path="url(#h)">
+                                    <rect width="3.315" height="33.598" transform="translate(188.845 24.795)"
+                                        fill="#fff" />
+                                    <path
+                                        d="M2263.694,334.448a.95.95,0,0,0-1.342,0,.954.954,0,0,0,0,1.343l5.442,5.443-5.442,5.442a.956.956,0,0,0,0,1.344.985.985,0,0,0,1.342,0l6.115-6.115a.948.948,0,0,0,0-1.343Z"
+                                        transform="translate(-2035.415 -299.633)" fill="#fff" />
+                                    <path
+                                        d="M2152.589,253.054a15.445,15.445,0,1,0,15.445,15.445,15.463,15.463,0,0,0-15.445-15.445m0,28.991a13.547,13.547,0,1,1,13.546-13.546,13.562,13.562,0,0,1-13.546,13.546"
+                                        transform="translate(-1923.392 -226.905)" fill="#fff" />
+                                </g>
+                                <text transform="translate(50.319 50.425)" fill="#fff" font-size="30"
+                                    font-family="Ubuntu-Regular, Ubuntu">
+                                    <tspan x="0" y="0">
+                                        Sprawdź
+                                    </tspan>
+                                </text>
+                            </g>
+                        </g>
+                    </g>
+                    <text transform="translate(1040 476)" fill="#141414" font-size="17" font-family="Arial, ArialMT">
+                        <tspan x="-74.263" y="0">
+                            Provident Polska SA
+                        </tspan>
+                    </text>
+                    <g class="data-slide-1">
+
+                        <text transform="translate(25 467)" fill="#000101" font-size="20" font-family="Arial, ArialMT">
+                            <tspan x="0" y="0">
+                                Promocja „Cashback” trwa od 04.11 do 26.11. 2024 r.
+                            </tspan>
+                        </text>
+                        <text transform="translate(25 254.813)" fill="#08b5f7" font-size="76"
+                            font-family="Ubuntu-Bold, Ubuntu" font-weight="700" letter-spacing="-0.006em">
+                            <tspan x="0" y="0">
+                                Niemożliwe?
+                            </tspan>
+                            <tspan fill="#8cd900">
+                                <tspan x="0" y="66">
+                                    Możliwe!
+                                </tspan>
+                            </tspan>
+                        </text>
+                        <g transform="translate(-9 228.627)">
+                            <path
+                                d="M72.543,163.95H178.09a20.254,20.254,0,0,1,0,40.5H72.543a20.254,20.254,0,0,1,0-40.5Z"
+                                transform="translate(307.173 -39.014)" fill="#8cd900" />
+                            <text transform="translate(34 158.186)" font-size="34" font-family="Ubuntu-Regular, Ubuntu">
+                                <tspan x="0" y="0">
+                                    Zyskaj w promocji do
+                                </tspan>
+                                <tspan y="0" font-family="Ubuntu-Medium, Ubuntu" font-weight="500"
+                                    letter-spacing="0.06em">
+                                </tspan>
+                                <tspan y="0" font-size="38" font-family="Ubuntu-Bold, Ubuntu" font-weight="700">
+                                    1500 zł
+                                </tspan>
+                                <tspan y="0" font-family="Ubuntu-Medium, Ubuntu" font-weight="500"
+                                    letter-spacing="0.06em">
+                                </tspan>
+                                <tspan y="0" x="480">
+                                    zwrotu!
+                                </tspan>
+                            </text>
+                        </g>
+                    </g>
+                    <g class="data-slide-2" style="opacity: 0;">
+
+                        <text transform="translate(25 268.25)" fill="#8cd900" font-size="57"
+                            font-family="Ubuntu-Bold, Ubuntu" font-weight="700" letter-spacing="-0.006em">
+                            <tspan x="0" y="0">
+                                Wybierz pożyczkę
+                            </tspan>
+                            <tspan fill="#08b5f7">
+                                <tspan x="0" y="57">
+                                    przez internet
+                                </tspan>
+                            </tspan>
+                        </text>
+                        <text transform="translate(25 388)" font-size="28" font-family="Ubuntu-Bold, Ubuntu"
+                            font-weight="700" letter-spacing="0.001em">
+                            <tspan x="0" y="0">
+                                „Samoobsługowa”
+                            </tspan>
+                            <tspan y="0" font-family="Ubuntu-Medium, Ubuntu" font-weight="500">
+                                RRSO 56,41%
+                            </tspan>
+                            <tspan font-family="Ubuntu-Medium, Ubuntu" font-weight="500">
+                                <tspan x="0" y="32">
+                                    lub
+                                </tspan>
+                                <tspan y="32" xml:space="" font-family="Ubuntu-Bold, Ubuntu" font-weight="700">
+                                    „Prima Plus”
+                                </tspan>
+                                <tspan y="32">
+                                    RRSO 29%
+                                </tspan>
+                            </tspan>
+                        </text>
+                    </g>
+                    <g class="data-rules">
+
+                        <text transform="translate(1119 548)" font-size="15.97" font-family="Arial-BoldMT, Arial"
+                            font-weight="700">
+                            <tspan x="-69.666" y="0">
+                                Zobacz szczegóły
+                            </tspan>
+                            <tspan x="-33.718" y="20.03">
+                                promocji
+                            </tspan>
+                        </text>
+                        <rect width="2" height="60" transform="translate(1035 522)" />
+                        <path d="M0,0H2V60H0ZM0,0V60H2V0Z" transform="translate(1035 522)" />
+                    </g>
+
+                </g>
+
+
+                <g class="data-scene2" style="opacity:0; visibility: hidden;">
+
+
+
+                    <rect width="1200" height="600" fill="#fff" />
+                    <g transform="translate(0 -17)">
+                        <rect width="1200" height="11" transform="translate(0 17)" fill="url(#a)" />
+
+                    </g>
+                    <g class="data-rules">
+
+                        <text transform="translate(1119 548)" font-size="15.97" font-family="Arial-BoldMT, Arial"
+                            font-weight="700">
+                            <tspan x="-62.133" y="0">
+                                Ukryj szczegóły
+                            </tspan>
+                            <tspan x="-33.718" y="20.03">
+                                promocji
+                            </tspan>
+                        </text>
+                        <rect width="2" height="60" transform="translate(1035 522)" />
+                        <path d="M0,0H2V60H0ZM0,0V60H2V0Z" transform="translate(1035 522)" />
+                    </g>
+                    <text transform="translate(17 46)" font-size="17" font-family="ArialMT, Arial">
+                        <tspan x="0" y="15">
+                            Klient, który w czasie trwania Promocji zawrze umowę pożyczki, nie odstąpi od niej oraz
+                            spłaci pierwszą ratę pożyczki zgodnie
+                        </tspan>
+                        <tspan x="0" y="40">
+                            z harmonogramem spłat otrzyma premię, której wartość jest zależna od wysokości całkowitej
+                            kwoty pożyczki i wynosi 50 zł
+                        </tspan>
+                        <tspan x="0" y="65">
+                            za każdy pełny jeden tysiąc całkowitej kwoty pożyczki. Maksymalna wartość premii wynosi 1500
+                            zł. Organizatorem Promocji
+                        </tspan>
+                        <tspan x="0" y="90">
+                            ”Cashback” jest Provident Polska S.A. Szczegółowe warunki i regulamin promocji są dostępne
+                            na www.provident.pl. Warunkiem
+                        </tspan>
+                        <tspan x="0" y="115">
+                            udzielenia pożyczki jest pozytywny wynik oceny zdolności kredytowej konsumenta. Promocja nie
+                            łączy się z innymi Ofertami
+                        </tspan>
+                        <tspan x="0" y="140">
+                            Indywidualnymi i Promocjami organizowanymi przez Provident Polska S.A.
+                        </tspan>
+                        <tspan x="0" y="165">
+                            Oferta produktowa pożyczka Samoobsługowa „Prima Plus” jest dostępna od 24.04.2024 r. i
+                            dotyczy pożyczki przez Internet
+                        </tspan>
+                        <tspan x="0" y="190">
+                            o całkowitej kwocie pożyczki od 1 000 zł do 30 000 zł spłacanej w 12, 18, 24, 36, 44 i 48
+                            ratach miesięcznych. Liczba możliwych
+                        </tspan>
+                        <tspan x="0" y="215">
+                            rat jest zależna od wybranej całkowitej kwoty pożyczki. Warunkiem udzielenia pożyczki jest
+                            pozytywny wynik oceny zdolności
+                        </tspan>
+                        <tspan x="0" y="240">
+                            kredytowej konsumenta. Reprezentatywny przykład dla Pożyczki Samoobsługowej “Prima Plus”:
+                            Rzeczywista Roczna Stopa
+                        </tspan>
+                        <tspan x="0" y="265">
+                            Oprocentowania (RRSO) wynosi 29,00%, całkowita kwota kredytu (bez kredytowanych kosztów) 7
+                            000 zł, całkowita kwota
+                        </tspan>
+                        <tspan x="0" y="290" xml:space="">
+                            do zapłaty 8 511,57 zł, oprocentowanie stałe 10%, całkowity koszt kredytu 1 511,57 zł (w
+                            tym: prowizja 264,98 zł, opłata
+                        </tspan>
+                        <tspan x="0" y="315">
+                            przygotowawcza 40 zł, opłata za elastyczny plan spłat 618,31 zł, odsetki 588,28 zł), 17
+                            równych rat miesięcznych w wysokości
+                        </tspan>
+                        <tspan x="0" y="340" xml:space="">
+                            472,87 zł i ostatnia 18 rata w wysokości 472,78 zł. Kalkulacja z dnia 24.04.2024 r. na
+                            reprezentatywnym przykładzie pożyczki
+                        </tspan>
+                        <tspan x="0" y="365">
+                            Samoobsługowej „Prima Plus”. Reprezentatywny przykład dla Pożyczki Samoobsługowej:
+                            Rzeczywista Roczna Stopa
+                        </tspan>
+                        <tspan x="0" y="390">
+                            Oprocentowania (RRSO) wynosi 56,41%, całkowita kwota kredytu (bez kredytowanych kosztów) 5
+                            200 zł, całkowita
+                        </tspan>
+                        <tspan x="0" y="415" xml:space="">
+                            kwota do zapłaty 8016,53 zł, oprocentowanie stałe 18,50%, całkowity koszt kredytu 2816,53 zł
+                            (w tym: prowizja 455,06 zł,
+                        </tspan>
+                        <tspan x="0" y="440">
+                            opłata przygotowawcza 40 zł, opłata za elastyczny plan spłat 1061,82 zł, odsetki 1259,65
+                            zł), 23 miesięcznych równych rat
+                        </tspan>
+                        <tspan x="0" y="465">
+                            w wysokości 334,03 zł, ostatnia 24 miesięczna rata w wysokości 333,84 zł. Kalkulacja została
+                            dokonana na dzień 19.09.2024 r.
+                        </tspan>
+                        <tspan x="0" y="490">
+                            na reprezentatywnym przykładzie Pożyczki Samoobsługowej.
+                        </tspan>
+                    </text>
+
+
+                </g>
+                <path d="M1,1V599H1199V1H1M0,0H1200V600H0Z" fill="#707070" opacity="0.298" />
+
+            </svg>
+
+        </div>
+    </a>
+</body>
+
+</html>

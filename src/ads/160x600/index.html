@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>{PROJECT_NAME}</title>
+    <meta name="ad.size" content="{AD_SIZE}">
+
+    <!--.-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/PawelGIX/brand-font@main/stylesheet.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+
+    <script src="clicktag.js" inline></script>
+    <script src="main.js" inline></script>
+
+    <style>
+        :root {
+            --width: 160px;
+            --height: 600px;
+            --content-width: var(--width);
+        }
+
+        body,
+        html,
+        a {
+            margin: 0;
+            padding: 0;
+            display: block;
+            overflow: hidden;
+            text-decoration: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: #fefefe;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        #clicktag {
+            cursor: pointer;
+        }
+
+        text {
+            text-rendering: geometricPrecision;
+        }
+
+        .data-btn rect,
+        .data-btn path {
+            transition: 333ms;
+        }
+
+        .data-btn:hover path,
+        .data-btn:hover rect {
+            filter: brightness(1.3);
+        }
+
+        .op0 {
+            opacity: 0;
+        }
+
+        #clicktag,
+        svg {
+            display: block;
+            /* aspect-ratio: calc(var(--width) / var(--height));
+            max-width: 100%; */
+        }
+
+        .outline {
+            pointer-events: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: var(--width);
+            height: var(--height);
+            border: 1px solid #ccc;
+            z-index: 3;
+            box-sizing: border-box;
+        }
+
+        #clicktag {
+            position: relative;
+            width: var(--width);
+        }
+
+        .disclaimer {
+            font-family: 'Arial', sans-serif;
+            font-size: 11px;
+            color: #000;
+            text-align: left;
+            line-height: 1.1;
+            position: absolute;
+            right: 0.5px;
+            top: 0.5px;
+            left: 0.5px;
+            bottom: 0.5px;
+
+            z-index: 2;
+
+        }
+
+        .disclaimer-inner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 42px;
+            width: 100%;
+            /* left: calc(50% - var(--content-width) / 2); */
+            padding: 5px;
+            overflow: auto;
+            background-color: #fff;
+            border-color: #fff;
+            box-sizing: border-box;
+            text-align: center;
+
+        }
+
+        .d-bar {
+            height: 3px;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 3;
+
+            background: linear-gradient(to right,
+                    #08b5f7 0%,
+                    #08b5f7 0.4%,
+                    #04a19b 30.1%,
+                    #008c3e 49.9%,
+                    #8cd900 99.4%,
+                    #8cd900 100%);
+        }
+
+        /* .smog {
+            filter: url("#turbulence");
+        } */
+    </style>
+
+</head>
+
+<body onload="init();" style="background-color:#fefefe">
+    <a id="clicktag" onclick="window.open(window.clickTag, '_blank')">
+        <div id="canvas">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="160" height="600"
+                viewBox="0 0 160 600" preserveAspectRatio="xMinYMin meet">
+
+                <defs>
+                    <linearGradient id="a" y1="0.5" x2="1" y2="0.5" gradientUnits="objectBoundingBox">
+                        <stop offset="0" stop-color="#08b5f7" />
+                        <stop offset="0.004" stop-color="#08b5f7" />
+                        <stop offset="0.301" stop-color="#04a19b" />
+                        <stop offset="0.499" stop-color="#008c3e" />
+                        <stop offset="0.994" stop-color="#8cd900" />
+                        <stop offset="1" stop-color="#8cd900" />
+                    </linearGradient>
+                    <linearGradient id="b" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+                        <stop offset="0" stop-color="#bc26d1" />
+                        <stop offset="1" stop-color="#9f00af" />
+                    </linearGradient>
+                    <linearGradient id="c" x1="0.964" y1="0.478" x2="0.374" y2="0.5" gradientUnits="objectBoundingBox">
+                        <stop offset="0" stop-color="#07b5f7" />
+                        <stop offset="1" stop-color="#fff" />
+                    </linearGradient>
+                    <clipPath id="d">
+                        <rect width="130.752" height="24.242" fill="none" />
+                    </clipPath>
+                    <clipPath id="f">
+                        <rect width="160" height="6" fill="url(#a)" />
+                    </clipPath>
+                    <clipPath id="g">
+                        <path
+                            d="M35.366,19.443c-7.677,0-13.9,6.87-13.9,15.344s6.223,15.343,13.9,15.343h70.667c7.677,0,13.9-6.869,13.9-15.343s-6.223-15.344-13.9-15.344Z"
+                            transform="translate(-21.466 -19.443)" fill="url(#b)" />
+                    </clipPath>
+
+                    <clipPath id="j">
+                        <rect width="160" height="600" />
+                    </clipPath>
+                </defs>
+                <g>
+                    <rect width="160" height="600" fill="#fff" />
+                    <image width="160" height="600" href="images/f.jpg" />
+
+                    <rect width="160" height="192" transform="translate(0 408)" fill="#fff" />
+                    <g transform="translate(14.624 13.758)">
+                        <g transform="translate(0 -2)" clip-path="url(#d)">
+                            <path
+                                d="M121.711,2.2c-1.622-1.414-4.446-4.771-19.325,1.319,8.257,2.341,13.911,11.279,7.988,16.67l-.033.032c8.392,2.52,12.317,2.537,14.089-4.508,1.8-7.154-1.088-12.09-2.719-13.513"
+                                transform="translate(-82.995 0)" fill="#8cd900" />
+                            <path
+                                d="M12.443,21.922c-.5-2.51,6.694-5.69,6.694-5.69l.254-.1a14.861,14.861,0,0,0-4.647-.566C4.244,15.981-.33,23.667.018,28.071c.3,3.76,3.012,8.284,13.011,8.744,9.525.438,13.922-3.6,14.317-3.984l-.386-.116C18.3,30.08,12.945,24.432,12.443,21.922"
+                                transform="translate(0 -12.606)" fill="#08b5f7" />
+                            <path
+                                d="M80.53,35.268c5.923-5.391.269-14.329-7.988-16.67l-.254.1s-7.2,3.18-6.694,5.69,5.857,8.158,14.517,10.793l.386.116.033-.032"
+                                transform="translate(-53.151 -15.076)" fill="#008c3e" />
+                            <path
+                                d="M265.2,32.648c0-1.47-1.044-2.406-3.216-2.406a18.5,18.5,0,0,0-1.9.106v4.962q.83.064,1.916.064c2.3,0,3.194-1.15,3.194-2.726m2.513-.021c0,2.939-2.087,4.834-5.707,4.834-.724,0-1.341-.021-1.916-.064V42.1a5.727,5.727,0,0,1-1.214.128,6.029,6.029,0,0,1-1.214-.128V28.6a18.275,18.275,0,0,1,4.259-.469c4.046,0,5.792,1.81,5.792,4.493"
+                                transform="translate(-208.861 -22.805)" />
+                            <path
+                                d="M320.6,47.454a3.468,3.468,0,0,1-.639,2.087,6.049,6.049,0,0,0-1.534-.192,3.915,3.915,0,0,0-1.9.4v7.751a5.722,5.722,0,0,1-1.214.106,5.845,5.845,0,0,1-1.214-.106V48.583a6.654,6.654,0,0,1,4.259-1.448,6.437,6.437,0,0,1,2.236.319"
+                                transform="translate(-254.619 -38.208)" />
+                            <path
+                                d="M354.247,52.388c0-1.938-1.107-3.279-2.917-3.279s-2.918,1.342-2.918,3.279c0,1.916,1.107,3.237,2.918,3.237s2.917-1.32,2.917-3.237m-8.262,0a5.2,5.2,0,0,1,5.387-5.366,5.115,5.115,0,0,1,5.3,5.366,5.19,5.19,0,0,1-5.387,5.345,5.1,5.1,0,0,1-5.3-5.345"
+                                transform="translate(-280.458 -38.116)" />
+                            <path
+                                d="M411.984,48.584a37.86,37.86,0,0,1-3.918,9.923,5.375,5.375,0,0,1-1.15.107,5.772,5.772,0,0,1-1.193-.107,36.1,36.1,0,0,1-3.961-9.923,6.576,6.576,0,0,1,1.661-.213,6.377,6.377,0,0,1,.937.085,51.742,51.742,0,0,0,2.491,7.5,1.837,1.837,0,0,1,.106.319l.128-.319a47.833,47.833,0,0,0,2.428-7.5,6.373,6.373,0,0,1,.937-.085,5.213,5.213,0,0,1,1.533.213"
+                                transform="translate(-325.672 -39.21)" />
+                            <path
+                                d="M460.384,39.095V29.023a5.841,5.841,0,0,1,1.214-.106,5.642,5.642,0,0,1,1.193.106V39.095a5.532,5.532,0,0,1-1.193.106,5.983,5.983,0,0,1-1.214-.106m-.362-13.139a1.555,1.555,0,1,1,1.576,1.533,1.55,1.55,0,0,1-1.576-1.533"
+                                transform="translate(-372.898 -19.797)" />
+                            <path
+                                d="M488.571,39.448V33.783a3.556,3.556,0,0,0-1.959-.447,3.03,3.03,0,0,0-3.131,3.215,2.964,2.964,0,0,0,3.088,3.215,5.27,5.27,0,0,0,2-.319m2.406-11.882V40.875a10.008,10.008,0,0,1-4.365,1c-3.322,0-5.579-1.874-5.579-5.281a5.238,5.238,0,0,1,5.494-5.388,5.565,5.565,0,0,1,2.044.32V27.565a5.522,5.522,0,0,1,1.192-.106,5.975,5.975,0,0,1,1.214.106"
+                                transform="translate(-389.929 -22.258)" />
+                            <path
+                                d="M547.212,51.579a2.257,2.257,0,0,0-2.257-2.495,2.6,2.6,0,0,0-2.576,2.495Zm2.278,1.6h-7.134a2.693,2.693,0,0,0,2.9,2.616,4.728,4.728,0,0,0,2.981-1.044,2.492,2.492,0,0,1,1.043,1.64,6.457,6.457,0,0,1-4.2,1.427,4.946,4.946,0,0,1-5.2-5.3,5.094,5.094,0,0,1,5.068-5.388,4.388,4.388,0,0,1,4.621,4.557,11.883,11.883,0,0,1-.085,1.494"
+                                transform="translate(-437.637 -38.2)" />
+                            <path
+                                d="M606.5,51.218v6.2a6.976,6.976,0,0,1-2.428,0V51.793c0-1.853-.894-2.555-2.448-2.555a4.635,4.635,0,0,0-2.236.554v7.623a6.854,6.854,0,0,1-2.406,0V48.62a7.848,7.848,0,0,1,4.834-1.6c3.258,0,4.685,1.874,4.685,4.2"
+                                transform="translate(-483.922 -38.117)" />
+                            <path
+                                d="M661.306,46.6a4.6,4.6,0,0,1-3.024,1.086c-2.172,0-3.769-.98-3.769-3.407V34.76a5.859,5.859,0,0,1,1.214-.106,5.34,5.34,0,0,1,1.171.106v2.683h3.769a3.673,3.673,0,0,1,.107.958,4,4,0,0,1-.107,1H656.9v4.323c0,1.491.7,1.874,1.7,1.874a2.615,2.615,0,0,0,1.682-.681,2.536,2.536,0,0,1,1.022,1.682"
+                                transform="translate(-530.553 -28.091)" />
+                        </g>
+                    </g>
+                    <rect width="160" height="189" transform="translate(0 411)" fill="#fff" />
+                    <text transform="translate(3 419)" font-size="11" font-family="ArialMT, Arial"
+                        letter-spacing="-0.043em">
+                        <tspan x="11.619" y="10">
+                            Promocja „Czas na nagrody”
+                        </tspan>
+                        <tspan x="17.582" y="22">
+                            trwa do 12.05.2026 r. i jest
+                        </tspan>
+                        <tspan x="5.29" y="34">
+                            skierowana do nowych klientów
+                        </tspan>
+                        <tspan x="8.287" y="46">
+                            karty kredytowej Provi Sm@rt.
+                        </tspan>
+                        <tspan x="19.783" y="58">
+                            Uczestnik promocji może
+                        </tspan>
+                        <tspan x="14.673" y="70">
+                            otrzymać nagrody o łącznej
+                        </tspan>
+                        <tspan x="16.746" y="82">
+                            wartości do 1000 zł (środki
+                        </tspan>
+                        <tspan x="1.407" y="94">
+                            pieniężne oraz nagrody w postaci
+                        </tspan>
+                        <tspan x="0.677" y="106">
+                            voucherów), jeśli w czasie trwania
+                        </tspan>
+                        <tspan x="4.997" y="118">
+                            promocji zawrze umowę o kartę
+                        </tspan>
+                        <tspan x="6.072" y="130">
+                            kredytową Provi Sm@rt i spełni
+                        </tspan>
+                        <tspan x="11.611" y="142">
+                            pozostałe warunki wskazane
+                        </tspan>
+                        <tspan x="23.14" y="154">
+                            w regulaminie promocji.
+                        </tspan>
+                    </text>
+                    <g transform="translate(0 407)">
+                        <rect width="160" height="6" fill="url(#a)" />
+
+                    </g>
+
+                    <g class="data-btn" transform="translate(-412.196 -15.319)">
+                        <g transform="translate(433.22 373.683)">
+                            <g transform="translate(0 1)">
+                                <g transform="translate(0 0)">
+                                    <rect width="117.951" height="32.374" rx="16.187" fill="#0063e8" />
+                                </g>
+                            </g>
+                        </g>
+                        <text transform="translate(492.196 395.682)" fill="#fff" font-size="19"
+                            font-family="BrandingSemibold, Branding" letter-spacing="-0.006em">
+                            <tspan x="-35.596" y="0">
+                                Sprawdź
+                            </tspan>
+                        </text>
+                    </g>
+                    <g transform="translate(-198 1)">
+                        <text transform="translate(278 181)" font-size="21" font-family="BrandingMedium, Branding"
+                            letter-spacing="-0.019em">
+                            <tspan x="-56.511" y="0">
+                                RRSO 56,01%
+                            </tspan>
+                        </text>
+                    </g>
+                    <text transform="translate(80 316)" fill="#575757" font-size="11"
+                        font-family="BrandingMedium, Branding" letter-spacing="-0.019em">
+                        <tspan x="-66.671" y="0">
+                            Promocja „Czas na nagrody”
+                        </tspan>
+                        <tspan x="-47.575" y="13">
+                            trwa do 12.05.2026 r.
+                        </tspan>
+                        <tspan x="-74.349" y="26">
+                            Sprawdź warunki w regulaminie.
+                        </tspan>
+                    </text>
+                    <g class="data-rules">
+                        <text transform="translate(0 581)" font-size="10" font-family="Arial-BoldMT, Arial"
+                            font-weight="700" letter-spacing="-0.04em">
+                            <tspan x="21.311" y="9">
+                                &gt;Zobacz więcej o promocji
+                            </tspan>
+                        </text>
+                    </g>
+
+                    <g transform="translate(-218 24)">
+                        <g transform="translate(222.582 85.557)">
+                            <g transform="translate(0 -0.556)">
+                                <rect width="79" height="20" rx="10" transform="translate(0.418 -0.001)"
+                                    fill="#bb2783" />
+                            </g>
+                        </g>
+                        <g transform="translate(177 11)">
+                            <g transform="translate(0 0)">
+                                <text transform="translate(124 41)" fill="#08b5f7" font-size="22"
+                                    font-family="BrandingSemibold, Branding" letter-spacing="-0.004em">
+                                    <tspan x="-66.704" y="0">
+                                        Zyskaj łącznie
+                                    </tspan>
+                                    <tspan x="-50.259" y="25">
+                                        nawet do
+                                    </tspan>
+                                    <tspan fill="#fff">
+                                        <tspan x="-74.679" y="50">
+                                            1000 zł
+                                        </tspan>
+                                        <tspan y="50" fill="#8cd900">
+                                            &nbsp;z kartą
+                                        </tspan>
+                                    </tspan>
+                                    <tspan fill="#8cd900">
+                                        <tspan x="-60.951" y="75">
+                                            Provi Sm@rt
+                                        </tspan>
+                                    </tspan>
+                                </text>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+
+
+                <g class="data-scene2" style="opacity:0; visibility: hidden;">
+
+                    <rect width="160" height="189" transform="translate(0 411)" fill="#fff" />
+                    <g transform="translate(0 407)">
+                        <rect width="160" height="6" fill="url(#a)" />
+
+                    </g>
+                    <text transform="translate(11 431)" font-size="11" font-family="ArialMT, Arial"
+                        letter-spacing="-0.043em">
+                        <tspan x="14.651" y="10">
+                            Regulamin dostępny na
+                        </tspan>
+                        <tspan x="28.389" y="22">
+                            www.provident.pl.
+                        </tspan>
+                        <tspan x="5.083" y="34">
+                            Organizatorem promocji jest
+                        </tspan>
+                        <tspan x="29.984" y="46">
+                            Provident Polska
+                        </tspan>
+                        <tspan x="10.142" y="58">
+                            SA.Warunkiem udzielenia
+                        </tspan>
+                        <tspan x="3.486" y="70">
+                            kredytu jest pozytywny wynik
+                        </tspan>
+                        <tspan x="6.67" y="82">
+                            oceny zdolności kredytowej
+                        </tspan>
+                        <tspan x="9.331" y="94">
+                            konsumenta. Rzeczywista
+                        </tspan>
+                        <tspan x="35.76" y="106">
+                            Roczna Stopa
+                        </tspan>
+                        <tspan x="11.305" y="118">
+                            Oprocentowania (RRSO)
+                        </tspan>
+                        <tspan x="32.261" y="130">
+                            wynosi 56,01%.
+                        </tspan>
+                    </text>
+                    <g class="data-rules">
+                        <text transform="translate(0 581)" font-size="10" font-family="Arial-BoldMT, Arial"
+                            font-weight="700" letter-spacing="-0.04em">
+                            <tspan x="25.828" y="9">
+                                &gt;Ukryj więcej o promocji
+                            </tspan>
+                        </text>
+                    </g>
+
+                </g>
+
+
+
+
+            </svg>
+
+            <!-- <div class="disclaimer data-rules" style="visibility: hidden;">
+                <div class="disclaimer-inner">
+
+                    <div class="d-bar"></div>
+
+                    <div class="disclaimer-inner2">
+
+                        oraz spłaci w całości pierwszą kwotę do zapłaty. Uczestnik otrzyma Nagrodę 2 za dany miesiąc,
+                        jeśli w jednym z 5
+                        miesięcy następujących po miesiącu zawarcia umowy wykona transakcje bezgotówkowe kartą na kwotę
+                        min. 500 zł. Łączna
+                        wartość Nagród 1 i 2 wynosi maks. 800 zł. Nagrody są od siebie niezależne i zostaną przekazane
+                        na rachunek karty
+                        uczestnika. Organizatorem promocji „800 plus - edycja II” jest Provident Polska SA. Regulamin
+                        dostępny
+                        na www.provident.pl Warunkiem udzielenia kredytu jest pozytywny wynik oceny zdolności kredytowej
+                        konsumenta. Rzeczywista
+                        Roczna Stopa Oprocentowania (RRSO) wynosi 56,01%, całkowita kwota kredytu 4500 zł, całkowita
+                        kwota do zapłaty 6149,76
+                        zł, oprocentowanie stałe 15%, całkowity koszt kredytu 1649,76 zł (w tym: opłaty miesięczne
+                        1113,75 zł, odsetki 536,01
+                        zł), 12 spłat: 11 miesięcznych spłat malejących, przy czym 1. spłata w wysokości 337,49 zł, 11.
+                        spłata w wysokości
+                        315,96 zł, a ostatnia spłata wymagana w dniu upływu terminu obowiązywania umowy o kredyt
+                        konsumencki jest w wysokości
+                        2551,42 zł. Kalkulacja z dnia 4.12.2025 r. na reprezentatywnym przykładzie karty kredytowej
+                        Provi Sm@rt. Do obliczenia
+                        powyższych parametrów przyjęto, że limit kredytowy w ramach karty kredytowej Provi Sm@rt w
+                        wysokości 4500 zł został
+                        wykorzystany jednorazowo w całości poprzez transakcję bezgotówkową dokonaną kartą kredytową.
+                    </div>
+
+
+                </div>
+            </div> -->
+
+
+
+
+        </div>
+        <div class="outline"></div>
+    </a>
+</body>
+
+</html>

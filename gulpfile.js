@@ -1,304 +1,396 @@
-(function() {
-    'use strict';
-    var
-        argv = require('yargs')
-        .usage('Usage: -f [string]')
+"use strict";
+var argv =
         // .demand(['f'])
-        .argv,
-        browserSync = require('browser-sync').create(),
-        del = require('del'),
-        fileSystem = require('fs'),
-        gulp = require('gulp'),
-        path = require('path'),
-        gutil = require('gulp-util'),
-        plugin = require('gulp-load-plugins')({
-            lazy: true
-        }),
-        // TO DO: Move these paths to gulpconfig.js
-        foldersPath = 'src/ads/',
-        sharedPath = 'src/shared/';
+        require("yargs").usage("Usage: -f [string]").argv,
+    browserSync = require("browser-sync").create(),
+    del = require("del"),
+    fileSystem = require("fs"),
+    gulp = require("gulp"),
+    rename = require("gulp-rename"),
+    path = require("path"),
+    gutil = console,
+    plugin = require("gulp-load-plugins")({
+        lazy: true,
+    }),
+    // TO DO: Move these paths to gulpconfig.js
+    foldersPath = "src/ads/",
+    sharedPath = "src/shared/";
 
-    var DISCLAIMER = require('./'+sharedPath+'disclaimer.txt');
+var inlinesource = require('gulp-inline-source');
+// var es = require("event-stream");
+var mergeStream = require("merge-stream");
+var open = require("open")
+const fileSync = require("gulp-file-sync");
+var DISCLAIMER = require("./" + sharedPath + "disclaimer.txt");
 
-    gutil.log( DISCLAIMER );
-
-    function getProjectName() {
-        return __dirname.replace(/.+(\\|\/)(.+?)$/,'$2');
-    }
-    function getFolders(dir) {
-        return fileSystem
-            .readdirSync(dir)
-            .filter(function(file) {
-                return fileSystem.statSync(path.join(dir, file)).isDirectory();
-            });
-    }
-
-    /**
-     * 750x200 -> width=750,height=200
-     */
-    function getAdsSize(str) {
-        return str.replace(/([0-9]+)x([0-9]+)/i,"width=$1,height=$2");
-    }
-
-    gulp.task('copy-shared-libs', function() {
-        // If there are extra libraries that have to be included
-        // These will NOT be concatenated into the main.js file
-        var folders = getFolders(foldersPath);
+gutil.log(DISCLAIMER);
 
 
+open('https://h5validator.appspot.com/dcm/asset');
+// open("https://codebeautify.org/xmlvalidator");
 
-        var tasks = folders.map(
-            function(folder) {
 
-                //    gutil.log(path.join(foldersPath,folder, 'libs/*.js'));
-                //    gutil.log(path.join('build/', folder ,'libs'));
-                return gulp
-                    .src(path.join(sharedPath, 'libs/*.js'))
-                    .pipe(gulp.dest(path.join('build/', folder, 'libs')));
-            }
+function getProjectName() {
+    return __dirname.replace(/.+(\\|\/)(.+?)$/, "$2");
+}
+function getFolders(dir) {
+    return fileSystem.readdirSync(dir).filter(function (file) {
+        return fileSystem.statSync(path.join(dir, file)).isDirectory();
+    });
+}
+
+/**
+ * 750x200 -> width=750,height=200
+ */
+function getAdsSize(str) {
+    return str.replace(/([0-9]+)x([0-9]+).*/i, "width=$1,height=$2");
+}
+
+function copySharedLibs(cb) {
+    // If there are extra libraries that have to be included
+    // These will NOT be concatenated into the main.js file
+    var folders = getFolders(foldersPath);
+
+    var tasks = folders.map(function (folder) {
+        //    gutil.log(path.join(foldersPath,folder, 'libs/*.js'));
+        //    gutil.log(path.join('build/', folder ,'libs'));
+        return gulp
+            .src(path.join(sharedPath, "js/*.js"))
+
+            .pipe(plugin.replace(/{DISCLAIMER}/g, DISCLAIMER)) // replace {DISCLAIMER} with disclaimer.txt
+
+            .pipe(gulp.dest(path.join("src/ads/", folder, "js")));
+    });
+    // return gulp.series(tasks);
+    cb();
+}
+exports.copySharedLibs = copySharedLibs;
+
+function copyLibs(cb) {
+    // If there are extra libraries that have to be included
+    // These will NOT be concatenated into the main.js file
+    var folders = getFolders(foldersPath);
+
+    var tasks = folders.map(function (folder) {
+        // gutil.log(path.join(foldersPath,folder, 'libs/*.js'));
+        // gutil.log(path.join('build/', folder ,'libs'));
+
+        return gulp
+            .src(path.join(path.join(foldersPath, folder, "libs/*.js")))
+            .pipe(gulp.dest(path.join("build/", folder, "")));
+    });
+    // return gulp.series(tasks);
+    cb();
+}
+exports.copyLibs = copyLibs;
+
+var buildJs = function (cb) {
+    var folders = getFolders(foldersPath);
+
+    var tasks = folders.map(function (folder) {
+        return (
+            gulp
+                .src([
+                    path.join(sharedPath, "/js/*.js"),
+                    path.join(foldersPath, folder, "*.js"),
+                ])
+                // .pipe(plugin.concat("main.js"))
+                .pipe(plugin.replace(/{DISCLAIMER}/g, DISCLAIMER)) // replace {DISCLAIMER} with disclaimer.txt
+                // TO DO: move the minifying to a deploy task
+                // .pipe(plugin.uglify())
+                .pipe(gulp.dest(path.join("build/", folder)))
+                .pipe(gulp.dest(path.join("build-wp-builder/", folder)))
         );
     });
 
-    gulp.task('copy-libs', function() {
-        // If there are extra libraries that have to be included
-        // These will NOT be concatenated into the main.js file
-        var folders = getFolders(foldersPath);
+    return mergeStream(tasks);
+    cb();
+};
+exports.buildJs = buildJs;
 
-        var tasks = folders.map(
-            function(folder) {
+// gulp.task('uglify-js',[], function() {
+//     var folders = getFolders(foldersPath);
 
-                // gutil.log(path.join(foldersPath,folder, 'libs/*.js'));
-                // gutil.log(path.join('build/', folder ,'libs'));
+//     var tasks = folders.map(
+//         function(folder) {
+//             return gulp
+//                 .src(path.join('build/', folder, '/**/*.js'))
+//                 .pipe(plugin.uglify())
+//                 .pipe(gulp.dest(path.join('build/', folder)));
 
-                return gulp
-                    .src(path.join(path.join(foldersPath, folder, 'libs/*.js')))
-                    .pipe(gulp.dest(path.join('build/', folder, '')));
-            }
+//         }
+//     );
+
+//     return tasks;
+// });
+
+var watchJs = gulp.series(buildJs, buildHtml, wpBuilder, cleanBuildJs, deploy, deployWpBuilder, function (cb) {
+    // TO DO:
+    // Make it so it is not needed to copy all
+    // external JS libraries on each reload
+    browserSync.reload();
+    cb();
+});
+
+function buildHtml(cb) {
+    var folders = getFolders(foldersPath);
+
+    var tasks = folders.map(function (folder) {
+        console.log("Html for: " + folder);
+        // gulp.src(path.join(sharedPath, "*.html"))
+        return gulp.src(path.join('src/ads', folder, "*.html"))
+            .pipe(plugin.replace(/{AD_SIZE}/g, getAdsSize(folder))) // replace {ADS_SIZE}
+            .pipe(plugin.replace(/{PROJECT_NAME}/g, getProjectName())) // replace {PROJECT_NAME} with folder name
+            .pipe(plugin.replace(/<!--[\s\S]+?-->/g, "")) // remove comments
+            .pipe(gulp.dest(path.join("build/", folder)))
+            .pipe(inlinesource())
+            .pipe(gulp.dest(path.join("build/", folder)))
+
+    });
+    return mergeStream(...tasks);
+
+    cb();
+}
+exports.buildHtml = buildHtml;
+
+function wpBuilder(cb) {
+    var folders = getFolders(foldersPath);
+
+    var tasks = folders.map(function (folder) {
+        console.log("Html for WP Builder: " + folder);
+        // gulp.src(path.join(sharedPath, "*.html"))
+        return gulp.src(path.join('src/ads', folder, "*.html"))
+            .pipe(plugin.replace(/{AD_SIZE}/g, getAdsSize(folder))) // replace {ADS_SIZE}
+            .pipe(plugin.replace(/{PROJECT_NAME}/g, getProjectName())) // replace {PROJECT_NAME} with folder name
+            .pipe(plugin.replace(/<!--[\s\S]+?-->/g, "<!--.-->")) // remove comments
+            .pipe(plugin.replace(/<script inline src="clicktag\.js"><\/script>/g, "")) // remove comments
+            .pipe(plugin.replace(/<a id="clicktag"/g, "<div id=\"clicktag\"")) // 
+            .pipe(plugin.replace(/<\/a>/g, "</div>")) // 
+            .pipe(gulp.dest(path.join("build-wp-builder/", folder)))
+            .pipe(inlinesource())
+            .pipe(gulp.dest(path.join("build-wp-builder/", folder)))
+
+    });
+    return mergeStream(...tasks);
+
+    cb();
+}
+exports.wpBuilder = wpBuilder;
+
+// gulp.task('build-html', ['build-html-replace'], function() {
+//     var folders = getFolders(foldersPath);
+//
+//     var tasks = folders.map(
+//         function(folder) {
+//             var file = path.join('build/', folder, 'index.html');
+//             return gulp
+//                 .src(file)
+//                 .pipe(gulp.dest(file));
+//         }
+//     );
+//
+//     return tasks;
+// });
+
+function buildCss(cb) {
+    var folders = getFolders(foldersPath);
+
+    var tasks = folders.map(function (folder) {
+        console.log(sharedPath);
+        return (
+            gulp
+                .src([
+                    path.join(sharedPath, "css/*.css"),
+                    path.join(foldersPath, folder, "css/*.css"),
+                ])
+                .pipe(plugin.concat("styles.css"))
+                .pipe(
+                    plugin.autoprefixer({
+                        browsers: ["last 2 versions"],
+                    })
+                )
+                // TO DO: Move the minifying to a deploy task
+                .pipe(plugin.cssnano())
+                .pipe(gulp.dest(path.join("build/", folder, "css")))
+                .pipe(browserSync.stream())
         );
     });
 
+    return mergeStream(tasks);
+    cb()
+};
+exports.buildCss = buildCss;
 
-    gulp.task('build-js', ['copy-libs', 'copy-shared-libs'], function() {
-    // gulp.task('build-js', [], function() {
-        var folders = getFolders(foldersPath);
+function copySharedImages(cb) {
+    var folders = getFolders(foldersPath);
 
-        var tasks = folders.map(
-            function(folder) {
-                return gulp
-                    .src([
-                        path.join(sharedPath, '/js/*.js'),
-                        path.join(foldersPath, folder, '*.js')
-                    ])
-                    .pipe(plugin.concat('main.js'))
-                    .pipe(plugin.replace(/{DISCLAIMER}/g, DISCLAIMER)) // replace {DISCLAIMER} with disclaimer.txt
-                    // TO DO: move the minifying to a deploy task
-                    // .pipe(plugin.uglify())
-                    .pipe(gulp.dest(path.join('build/', folder, '')));
-            }
-        );
+    var tasks = folders.map(function (folder) {
+        return gulp
+            .src(path.join(sharedPath, "images/*.*"))
+            .pipe(gulp.dest(path.join("build", folder, "images")))
+            .pipe(gulp.dest(path.join("build-wp-builder", folder, "images")));
+    });
+    return mergeStream(tasks);
+    cb();
+}
+exports.copySharedImages = copySharedImages;
 
-        return tasks;
+function copyImages(cb) {
+    var folders = getFolders(foldersPath);
+
+    var tasks = folders.map(function (folder) {
+        return gulp
+            .src(path.join(foldersPath, folder, "images/*.*"))
+            .pipe(gulp.dest(path.join("build", folder, "images")))
+            .pipe(gulp.dest(path.join("build-wp-builder", folder, "images")));
     });
 
-    gulp.task('uglify-js',[], function() {
-        var folders = getFolders(foldersPath);
+    return mergeStream(tasks);
+    cb();
+};
+exports.copyImages = copyImages;
 
-        var tasks = folders.map(
-            function(folder) {
-                return gulp
-                    .src(path.join('build/', folder, '/**/*.js'))
-                    .pipe(plugin.uglify())
-                    .pipe(gulp.dest(path.join('build/', folder)));
+var watchImages = gulp.series(copySharedImages, copyImages, function (cb) {
+    browserSync.reload();
+    cb();
+});
 
-            }
-        );
+// gulp.task('compress-images', function() {
+//     var folders = getFolders(foldersPath);
 
-        return tasks;
+//     var tasks = folders.map(
+//         function(folder) {
+//             return gulp
+//                 .src(path.join('build/', folder, './*.{gif,jpg,png,svg}'))
+//                 .pipe(plugin.imagemin())
+//                 .pipe(gulp.dest(path.join('build', folder)));
+//         }
+//     );
+
+//     return tasks;
+// });
+
+function cleanBuild(cb) {
+    return Promise.all([ del("build/**/*.*"), del("deploy/**/*.*"), del("build-wp-builder/**/*.*"), del("deploy-wp-builder/**/*.*") ]);
+};
+exports.cleanBuild = cleanBuild;
+
+function cleanBuildJs(cb) {
+    return del(["build/**/*.js", "build-wp-builder/**/*.js"]);
+};
+exports.cleanBuildJs = cleanBuildJs;
+// function cleanupInlinedScripts(cb) {
+//     return del.sync("build/**/*.*");
+// };
+// exports.cleanupInlinedScripts = cleanupInlinedScripts;
+
+// gulp.task('clean-deploy', function() {
+//    return del.sync('deploy/**/*.*');
+// });
+
+// gulp.task('build', [
+//     'clean-build',
+//     'copy-images',
+//     'build-html',
+//     'build-css',
+//     'build-js'
+// ]);
+
+function deploy(cb) {
+
+
+    var projectName = getProjectName();
+    // Zip each ad on its own folder and place them into a 'deploy' folder
+    var folders = getFolders('./build/');
+    console.log(projectName, folders );
+
+    var tasks = folders.map(function(folder) {
+        return gulp
+            .src(path.join('build', folder, '**'))
+            .pipe(plugin.zip(projectName+'-'+folder + '.zip'))
+            .pipe(gulp.dest('deploy/'));
     });
 
-    gulp.task('watch-js', ['build-js'], function() {
-        // TO DO:
-        // Make it so it is not needed to copy all
-        // external JS libraries on each reload
-        browserSync.reload();
+    return mergeStream(tasks);
+    cb();
+}
+exports.deploy = deploy;
+function deployWpBuilder(cb) {
+
+
+    var projectName = getProjectName();
+    // Zip each ad on its own folder and place them into a 'deploy' folder
+    var folders = getFolders('./build/');
+    console.log(projectName, folders );
+
+    var tasks = folders.map(function(folder) {
+        return gulp
+            .src(path.join('build-wp-builder', folder, '**'))
+            .pipe(plugin.zip(projectName+'-'+folder + '.zip'))
+            .pipe(gulp.dest('deploy-wp-builder/'));
     });
 
-    gulp.task('build-html', function() {
-        var folders = getFolders(foldersPath);
+    return mergeStream(tasks);
+    cb();
+}
+exports.deployWpBuilder = deployWpBuilder;
+function duplicateIndexHtml(cb) {
 
-        var tasks = folders.map(
-            function(folder) {
-                console.log('Html for: '+folder);
-                return gulp
-                    .src(path.join(sharedPath, '*.html'))
-                    .pipe(plugin.replace(/{ADS_SIZE}/g, getAdsSize(folder))) // replace {ADS_SIZE}
-                    .pipe(plugin.replace(/{PROJECT_NAME}/g, getProjectName())) // replace {PROJECT_NAME} with folder name
-                    .pipe(plugin.replace(/<!--.+?-->/g, '<!--.-->')) // remove comments
-                    .pipe(gulp.dest(path.join('build/', folder)));
-            }
-        );
 
-        return tasks;
+
+    return gulp
+        .src(path.join('index.html'))
+        .pipe(plugin.replace(/\/build\//g, "/build-wp-builder/")) // remove comments
+        .pipe(rename("index-wp-builder.html")) // remove comments
+        .pipe(gulp.dest('.'));
+
+    cb();
+}
+exports.duplicateIndexHtml = duplicateIndexHtml;
+
+function watch(cb) {
+    // var dest = 'build/' + argv.f;
+    var dest = "build/";
+    console.log("Watching folder: ", argv.f, dest);
+    browserSync.init({
+        server: dest,
+        baseDir: dest,
+        directory: true,
     });
 
-    // gulp.task('build-html', ['build-html-replace'], function() {
-    //     var folders = getFolders(foldersPath);
-    //
-    //     var tasks = folders.map(
-    //         function(folder) {
-    //             var file = path.join('build/', folder, 'index.html');
-    //             return gulp
-    //                 .src(file)
-    //                 .pipe(gulp.dest(file));
-    //         }
-    //     );
-    //
-    //     return tasks;
-    // });
-
-    gulp.task('build-css', function() {
-        var folders = getFolders(foldersPath);
-
-        var tasks = folders.map(
-            function(folder) {
-                console.log(sharedPath);
-                return gulp
-                    .src([
-                        path.join(sharedPath, 'css/*.css'),
-                        path.join(foldersPath, folder, 'css/*.css')
-                    ])
-                    .pipe(plugin.concat('styles.css'))
-                    .pipe(plugin.autoprefixer({
-                        browsers: ['last 2 versions']
-                    }))
-                    // TO DO: Move the minifying to a deploy task
-                    .pipe(plugin.cssnano())
-                    .pipe(gulp.dest(path.join('build/', folder, 'css')))
-                    .pipe(browserSync.stream());
-            }
-        );
-
-        return tasks;
-    });
-
-    gulp.task('watch-html', ['build-html'], function() {
-        browserSync.reload();
-    });
-
-    gulp.task('copy-shared-images', function() {
-        var folders = getFolders(foldersPath);
-
-        var tasks = folders.map(
-            function(folder) {
-                return gulp
-                    .src(path.join(sharedPath, 'images/*.*'))
-                    .pipe(gulp.dest(path.join('build', folder, 'images')));
-            }
-        );
-    });
-
-    gulp.task('copy-images', ['copy-shared-images'], function() {
-        var folders = getFolders(foldersPath);
-
-        var tasks = folders.map(
-            function(folder) {
-                return [
-                    gulp
-                    .src(path.join(foldersPath, folder, 'images/*.*'))
-                    .pipe(gulp.dest(path.join('build', folder, 'images')))
-                    ,
-                    gulp
-                    .src(path.join(foldersPath, folder, '*.{gif,jpg,png,svg}'))
-                    .pipe(gulp.dest(path.join('build', folder)))
-                ]
-            }
-        );
-       
-
-        return tasks;
-    });
-
-    gulp.task('watch-images', ['copy-images'], function() {
-        browserSync.reload();
-    });
-
-    gulp.task('compress-images', function() {
-        var folders = getFolders(foldersPath);
-
-        var tasks = folders.map(
-            function(folder) {
-                return gulp
-                    .src(path.join('build/', folder, './*.{gif,jpg,png,svg}'))
-                    .pipe(plugin.imagemin())
-                    .pipe(gulp.dest(path.join('build', folder)));
-            }
-        );
-
-        return tasks;
-    });
-
-    gulp.task('clean-build', function() {
-        return del.sync('build/**/*.*');
-        /*
-        TO DO
-        Figure out a way to call the following
-        compress-images, build-html, build-css, build-js
-        once the del task is completed
-        */
-    });
-
-    gulp.task('clean-deploy', function() {
-       return del.sync('deploy/**/*.*');
-    });
-
-    gulp.task('build', [
-        'clean-build',
-        'copy-images',
-        'build-html',
-        'build-css',
-        'build-js'
-    ]);
-
-    gulp.task('deploy', ['clean-deploy', 'uglify-js'], function() {
-        /* TO DO:
-          Run the clean-deploy task first then, run the build task
-
-          BUG !
-          The compressed images are NOT being zipped into the deploy folders
-        */
-
-
-        var projectName = getProjectName();
-        // Zip each ad on its own folder and place them into a 'deploy' folder
-        var folders = getFolders('./build/');
-        console.log(projectName, folders );
-
-        var tasks = folders.map(function(folder) {
-            return gulp
-                .src(path.join('build', folder ,'**/*'))
-                .pipe(plugin.zip(projectName+'-'+folder + '.zip'))
-                .pipe(gulp.dest('deploy/'));
-        });
-
-        return tasks;
-    });
-
-    gulp.task('watch', ['build'], function() {
-        var dest = 'build/' + argv.f;
-        console.log("Watching folder: ", argv.f, dest);
-        browserSync.init({
-            server: dest
-        });
-
-        gulp.watch('src/**/*.{gif,jpg,png,svg}', ['watch-images']);
-        gulp.watch('src/**/*.css', ['build-css']);
-        gulp.watch('src/**/*.html', ['watch-html']);
-        gulp.watch('src/**/*.js', ['watch-js']);
-        gulp.watch('src/shared/*.txt', ['watch-js']);
-    });
-
-    gulp.task('default', ['build']);
-    // Minify it
-    // Zip each folder up
-    // Move each of them to a deploy folder
-})();
+    gulp.watch("src/**/*.{gif,jpg,png,svg}", gulp.series(watchImages));
+    gulp.watch("src/**/*.css", gulp.series(buildCss));
+    gulp.watch(
+        "src/**/*.html",
+        gulp.series(buildScripts, buildHtml, wpBuilder, cleanBuildJs, deploy, deployWpBuilder, function (cb) {
+            browserSync.reload();
+            cb();
+        })
+    );
+  
+    
+    gulp.watch("src/**/*.js", gulp.series(watchJs));
+    gulp.watch("src/shared/*.txt", gulp.series(watchJs));
+    cb();
+}
+// var buildScripts = gulp.series(copyLibs, copySharedLibs, buildJs);
+var buildScripts = gulp.series(buildJs);
+exports.buildScripts = buildScripts;
+var buildAll = gulp.series(
+    cleanBuild,
+    copySharedImages,
+    copyImages,
+    buildCss,
+    buildScripts,
+    buildHtml,
+    wpBuilder,
+    cleanBuildJs,
+    deploy,
+    deployWpBuilder,
+    // duplicateIndexHtml
+);
+exports.buildAll = buildAll;
+exports.default = gulp.series(buildAll, watch);
+// Minify it
+// Zip each folder up
+// Move each of them to a deploy folder

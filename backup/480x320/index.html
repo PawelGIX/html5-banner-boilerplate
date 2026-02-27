@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>{PROJECT_NAME}</title>
+    <meta name="ad.size" content="{AD_SIZE}">
+
+    <!--.-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap"
+        rel="stylesheet">
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.5/gsap.min.js"></script>
+
+    <script src="clicktag.js" inline></script>
+    <script src="main.js" inline></script>
+
+    <style>
+        :root {
+            --width: 480px;
+            --height: 320px;
+            --content-width: var(--width);
+        }
+
+        body,
+        html,
+        a {
+            margin: 0;
+            padding: 0;
+            display: block;
+            overflow: hidden;
+            text-decoration: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background-color: #fefefe;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background-color: #ccc;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        #clicktag {
+            cursor: pointer;
+        }
+
+        text {
+            text-rendering: geometricPrecision;
+        }
+
+        .data-btn rect,
+        .data-btn path {
+            transition: 333ms;
+        }
+
+        .data-btn:hover path,
+        .data-btn:hover rect {
+            filter: brightness(1.3);
+        }
+
+        .op0 {
+            opacity: 0;
+        }
+
+        #clicktag,
+        svg {
+            display: block;
+            /* aspect-ratio: calc(var(--width) / var(--height));
+            max-width: 100%; */
+        }
+
+        .outline {
+            pointer-events: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: var(--width);
+            height: var(--height);
+            border: 1px solid #ccc;
+            z-index: 3;
+            box-sizing: border-box;
+        }
+
+        #clicktag {
+            position: relative;
+            width: var(--width);
+        }
+
+        .disclaimer {
+            font-family: 'Arial', sans-serif;
+            font-size: 10px;
+            color: #000;
+            text-align: left;
+            line-height: 1.1;
+            position: absolute;
+            right: 0.5px;
+            top: 0.5px;
+            left: 0.5px;
+            bottom: 0.5px;
+
+            z-index: 2;
+
+        }
+
+        .disclaimer-inner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 25px;
+            width: 100%;
+            /* left: calc(50% - var(--content-width) / 2); */
+            padding: 12px 5px;
+            overflow: auto;
+            background-color: #fff;
+            border-color: #fff;
+            box-sizing: border-box;
+            text-align: center;
+
+        }
+
+        .d-bar {
+            height: 3px;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 3;
+
+            background: linear-gradient(to right,
+                    #08b5f7 0%,
+                    #08b5f7 0.4%,
+                    #04a19b 30.1%,
+                    #008c3e 49.9%,
+                    #8cd900 99.4%,
+                    #8cd900 100%);
+        }
+
+        /* .smog {
+            filter: url("#turbulence");
+        } */
+    </style>
+
+</head>
+
+<body onload="init();" style="background-color:#fefefe">
+    <a id="clicktag" onclick="window.open(window.clickTag, '_blank')">
+        <div id="canvas">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="480" height="320"
+                viewBox="0 0 480 320" preserveAspectRatio="xMinYMin meet">
+
+
+                <defs>
+                    <linearGradient id="a" y1="0.5" x2="1" y2="0.5" gradientUnits="objectBoundingBox">
+                        <stop offset="0" stop-color="#08b5f7" />
+                        <stop offset="0.004" stop-color="#08b5f7" />
+                        <stop offset="0.301" stop-color="#04a19b" />
+                        <stop offset="0.499" stop-color="#008c3e" />
+                        <stop offset="0.994" stop-color="#8cd900" />
+                        <stop offset="1" stop-color="#8cd900" />
+                    </linearGradient>
+                    <linearGradient id="b" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+                        <stop offset="0" stop-color="#bc26d1" />
+                        <stop offset="1" stop-color="#9f00af" />
+                    </linearGradient>
+                    <linearGradient id="c" x1="1" x2="0" gradientUnits="objectBoundingBox">
+                        <stop offset="0" stop-color="#08b5f7" />
+                        <stop offset="0.313" stop-color="#aae5fc" />
+                        <stop offset="0.629" stop-color="#fff" />
+                        <stop offset="1" stop-color="#fff" />
+                    </linearGradient>
+                    <clipPath id="e">
+                        <rect width="480" height="4" fill="url(#a)" />
+                    </clipPath>
+
+                    <linearGradient id="g" x1="0.5" y1="1" x2="0.636" gradientUnits="objectBoundingBox">
+                        <stop offset="0" stop-color="#cc0186" />
+                        <stop offset="1" stop-color="#9f00af" />
+                    </linearGradient>
+                    <linearGradient id="h" x1="0.65" x2="0.529" y2="1" gradientUnits="objectBoundingBox">
+                        <stop offset="0" stop-color="#ca0087" />
+                        <stop offset="1" stop-color="#9f00af" />
+                    </linearGradient>
+                    <clipPath id="i">
+                        <path
+                            d="M37.693,19.443A16.478,16.478,0,0,0,21.466,36.162,16.478,16.478,0,0,0,37.693,52.88h82.5a16.478,16.478,0,0,0,16.227-16.718,16.479,16.479,0,0,0-16.227-16.719Z"
+                            transform="translate(-21.466 -19.443)" fill="url(#b)" />
+                    </clipPath>
+                    <clipPath id="j">
+                        <rect width="143.13" height="26.537" fill="none" />
+                    </clipPath>
+                    <clipPath id="l">
+                        <rect width="480" height="320" />
+                    </clipPath>
+                </defs>
+                <g>
+                    <rect width="480" height="320" fill="#fff" />
+                    <image width="480" height="320" href="images/f.jpg" />
+
+
+                    <g transform="translate(0 20)">
+                        <rect width="480" height="76" transform="translate(0 224)" fill="#fff" />
+                        <g transform="translate(0 224)">
+                            <rect width="480" height="4" fill="url(#a)" />
+
+                        </g>
+                        <text transform="translate(0 232)" font-size="10" font-family="ArialMT, Arial"
+                            letter-spacing="-0.022em">
+                            <tspan x="16.155" y="9">
+                                Oferta produktowa pożyczka „bezProvizji” jest dostępna od 19.03.2025 r. i dotyczy
+                                pożyczki przez internet
+                            </tspan>
+                            <tspan x="2.457" y="20">
+                                o całkowitej kwocie pożyczki od 1000 zł do 30 000 zł, spłacanej w 12, 18, 24, 36, 44 lub
+                                48 ratach miesięcznych.
+                            </tspan>
+                            <tspan x="8.804" y="31">
+                                Liczba możliwych rat jest zależna od wybranej całkowitej kwoty pożyczki. Warunkiem
+                                udzielenia pożyczki jest
+                            </tspan>
+                            <tspan x="115.046" y="42">
+                                pozytywny wynik oceny zdolności kredytowej konsumenta.
+                            </tspan>
+                        </text>
+                        <g class="data-rules" transform="translate(11 282)">
+                            <rect width="2" height="458" transform="translate(458 -1) rotate(90)" />
+                            <path d="M0,0H2V458H0ZM0,0V458H2V0Z" transform="translate(458 -1) rotate(90)" />
+                            <text transform="translate(229 13)" font-size="11" font-family="Arial-BoldMT, Arial"
+                                font-weight="700">
+                                <tspan x="-58.985" y="0">
+                                    Zobacz koszt pożyczki
+                                </tspan>
+                            </text>
+                        </g>
+                    </g>
+
+                    <text transform="translate(402 232)" fill="#141414" font-size="9" font-family="Arial, ArialMT">
+                        <tspan x="-39.316" y="0">
+                            Provident Polska SA
+                        </tspan>
+                    </text>
+                    <g class="data-btn" transform="translate(340 184)">
+                        <g transform="translate(0 0)">
+                            <rect width="129" height="36" rx="18" transform="translate(0 0)" fill="url(#g)" />
+                            <rect width="124" height="33" rx="16.5" transform="translate(3 2)" fill="url(#h)" />
+                        </g>
+                        <g transform="translate(26.281 10.881)">
+                            <g transform="translate(0 0)">
+                                <g transform="translate(59.552)">
+                                    <g transform="translate(0)">
+                                        <rect width="1.409" height="14.278" fill="#fff" />
+                                        <path
+                                            d="M2262.763,334.289a.4.4,0,0,0-.57,0,.4.4,0,0,0,0,.571l2.313,2.313-2.313,2.312a.405.405,0,0,0,0,.571.418.418,0,0,0,.57,0l2.6-2.6a.4.4,0,0,0,0-.571Z"
+                                            transform="translate(-2247.983 -330.031)" fill="#fff" />
+                                        <path
+                                            d="M2143.707,253.054a6.564,6.564,0,1,0,6.563,6.564,6.571,6.571,0,0,0-6.563-6.564m0,12.32a5.757,5.757,0,1,1,5.757-5.757,5.763,5.763,0,0,1-5.757,5.757"
+                                            transform="translate(-2128.537 -252.479)" fill="#fff" />
+                                    </g>
+                                </g>
+                                <path
+                                    d="M3.669-7.35q2.09,0,2.09-1.43a1.431,1.431,0,0,0-.186-.749,1.8,1.8,0,0,0-.5-.536,3.486,3.486,0,0,0-.722-.392q-.406-.165-.859-.33a8.76,8.76,0,0,1-.99-.406,3.464,3.464,0,0,1-.811-.536,2.276,2.276,0,0,1-.543-.736,2.421,2.421,0,0,1-.2-1.031A2.389,2.389,0,0,1,1.8-15.449a3.6,3.6,0,0,1,2.351-.7,6.209,6.209,0,0,1,1.575.186,3.6,3.6,0,0,1,1.038.406l-.426,1.086a3.758,3.758,0,0,0-.859-.351A4.615,4.615,0,0,0,4.15-15a2.943,2.943,0,0,0-.715.083,1.834,1.834,0,0,0-.578.248,1.225,1.225,0,0,0-.392.419,1.192,1.192,0,0,0-.144.6A1.272,1.272,0,0,0,2.472-13a1.5,1.5,0,0,0,.426.461,3.657,3.657,0,0,0,.639.364q.364.165.8.33.619.248,1.134.5a3.694,3.694,0,0,1,.894.591,2.369,2.369,0,0,1,.584.818,2.873,2.873,0,0,1,.206,1.148,2.248,2.248,0,0,1-.914,1.925,4.282,4.282,0,0,1-2.578.674A6.613,6.613,0,0,1,2.631-6.27a7.727,7.727,0,0,1-.846-.179,4.893,4.893,0,0,1-.639-.22q-.268-.117-.419-.2l.4-1.1a6.02,6.02,0,0,0,.963.4A4.947,4.947,0,0,0,3.669-7.35Zm9.983-2.613a2.746,2.746,0,0,0-.619-1.925,2.132,2.132,0,0,0-1.65-.674,7.548,7.548,0,0,0-.9.041,3.622,3.622,0,0,0-.516.1v4.51a2.632,2.632,0,0,0,.674.371,2.534,2.534,0,0,0,.963.179,2.056,2.056,0,0,0,.942-.2,1.729,1.729,0,0,0,.639-.55,2.325,2.325,0,0,0,.358-.825A4.53,4.53,0,0,0,13.652-9.963Zm1.334,0a5.041,5.041,0,0,1-.213,1.5,3.392,3.392,0,0,1-.626,1.183,2.844,2.844,0,0,1-1.011.77,3.241,3.241,0,0,1-1.368.275A3.323,3.323,0,0,1,10.675-6.4a3.452,3.452,0,0,1-.708-.316v2.86H8.688v-9.475q.454-.11,1.134-.241A8.428,8.428,0,0,1,11.4-13.7a4.006,4.006,0,0,1,1.485.261,3.182,3.182,0,0,1,1.128.743,3.281,3.281,0,0,1,.722,1.176A4.513,4.513,0,0,1,14.986-9.963Zm4.442-3.74q.165,0,.378.021t.419.055q.206.034.378.069a2.306,2.306,0,0,1,.254.062l-.22,1.114a4.286,4.286,0,0,0-.5-.131,4.4,4.4,0,0,0-.9-.076,3.35,3.35,0,0,0-.708.076q-.351.076-.461.1V-6.4H16.788v-6.848a8.694,8.694,0,0,1,1.128-.309A7.244,7.244,0,0,1,19.428-13.7Zm5.088,6.381q.454,0,.8-.021a3.511,3.511,0,0,0,.584-.076V-9.55a1.639,1.639,0,0,0-.447-.117,4.971,4.971,0,0,0-.749-.048,4.842,4.842,0,0,0-.612.041,1.885,1.885,0,0,0-.591.172,1.267,1.267,0,0,0-.447.358.939.939,0,0,0-.179.6,1.027,1.027,0,0,0,.44.956A2.29,2.29,0,0,0,24.516-7.322Zm-.11-6.408a3.706,3.706,0,0,1,1.3.2,2.106,2.106,0,0,1,.853.564,2.135,2.135,0,0,1,.461.866,4.183,4.183,0,0,1,.138,1.107v4.469l-.461.076q-.3.048-.667.089t-.8.076q-.433.034-.859.034a4.71,4.71,0,0,1-1.114-.124,2.491,2.491,0,0,1-.88-.392,1.8,1.8,0,0,1-.578-.708,2.479,2.479,0,0,1-.206-1.059,2.038,2.038,0,0,1,.241-1.018,1.917,1.917,0,0,1,.653-.688,3.025,3.025,0,0,1,.963-.385,5.249,5.249,0,0,1,1.155-.124q.193,0,.4.021t.392.055l.323.062q.138.028.193.041v-.358a2.876,2.876,0,0,0-.069-.626,1.431,1.431,0,0,0-.248-.55,1.253,1.253,0,0,0-.488-.385,1.914,1.914,0,0,0-.8-.144,6.042,6.042,0,0,0-1.107.089,3.871,3.871,0,0,0-.708.186l-.151-1.059a3.941,3.941,0,0,1,.825-.213A7.127,7.127,0,0,1,24.406-13.73ZM34.8-6.4q-.385-.99-.818-2.262t-.791-2.647q-.358,1.375-.784,2.647T31.6-6.4H30.484q-.633-1.416-1.238-3.232T28.1-13.552H29.48q.138.646.33,1.4t.406,1.513q.213.756.447,1.458t.44,1.224q.234-.646.461-1.368T32-10.781q.206-.736.392-1.444t.323-1.327H33.77q.124.619.3,1.327t.385,1.444q.206.736.433,1.458t.461,1.368q.206-.523.433-1.224t.447-1.458q.22-.756.413-1.513t.33-1.4h1.32q-.536,2.1-1.141,3.919T35.916-6.4Zm9.461-5.638a2.632,2.632,0,0,0-.674-.371,2.534,2.534,0,0,0-.963-.179,2.056,2.056,0,0,0-.942.2,1.729,1.729,0,0,0-.639.55,2.324,2.324,0,0,0-.358.832,4.621,4.621,0,0,0-.11,1.031A2.772,2.772,0,0,0,41.2-8.044a2.122,2.122,0,0,0,1.65.681,6.594,6.594,0,0,0,.873-.048,4.139,4.139,0,0,0,.543-.1Zm0-4.813,1.279-.22V-6.607q-.44.124-1.128.248a9,9,0,0,1-1.581.124A4.006,4.006,0,0,1,41.347-6.5,3.183,3.183,0,0,1,40.22-7.24,3.281,3.281,0,0,1,39.5-8.416a4.513,4.513,0,0,1-.254-1.561,5.09,5.09,0,0,1,.213-1.513,3.392,3.392,0,0,1,.626-1.183,2.844,2.844,0,0,1,1.011-.77,3.241,3.241,0,0,1,1.368-.275,3.323,3.323,0,0,1,1.093.165,3.452,3.452,0,0,1,.708.316Zm8.223,4.263q-.289.316-.763.894t-1.018,1.279q-.543.7-1.086,1.471t-.956,1.471H52.6V-6.4H47.137v-.853q.33-.605.811-1.334t1.011-1.451q.529-.722,1.031-1.361t.873-1.079H47.329v-1.073h5.157Zm-1-3.672-1.939,1.884-.646-.578,1.76-2.118Z"
+                                    transform="translate(-0.726 17.697)" fill="#fff" />
+                            </g>
+                        </g>
+                    </g>
+
+                    <g transform="translate(-25 -194)">
+                        <text transform="translate(42 289)" fill="#8cd900" font-size="34"
+                            font-family="Ubuntu-Bold, Ubuntu" font-weight="700" letter-spacing="-0.019em">
+                            <tspan x="0" y="0">
+                                Nierabialne?
+                            </tspan>
+                            <tspan fill="#08b5f7">
+                                <tspan x="0" y="33">
+                                    Rabialne!
+                                </tspan>
+                            </tspan>
+                        </text>
+                        <g transform="translate(42 338.519)">
+                            <text transform="translate(0 18.481)" font-size="21" font-family="Ubuntu-Regular, Ubuntu"
+                                letter-spacing="-0.01em">
+                                <tspan x="0" y="0">
+                                    Weź pożyczkę
+                                </tspan>
+                                <tspan y="0" font-family="Ubuntu-Bold, Ubuntu" font-weight="700">
+                                    bezProvizji
+                                </tspan>
+                                <tspan fill="#08b5f7" font-family="Ubuntu-Bold, Ubuntu" font-weight="700">
+                                    <tspan x="0" y="23">
+                                        online do 30 000 zł
+                                    </tspan>
+                                </tspan>
+                                <tspan x="0" y="46">
+                                    RRSO
+                                </tspan>
+                                <tspan y="46" font-family="Ubuntu-Bold, Ubuntu" font-weight="700">
+                                    29,01%
+                                </tspan>
+                            </text>
+                        </g>
+                    </g>
+                    <g transform="translate(5.88 -26)">
+                        <g transform="translate(11.12 40.96)">
+                            <g transform="translate(0 0)" clip-path="url(#j)">
+                                <path
+                                    d="M123.54,2.412c-1.776-1.548-4.867-5.223-21.154,1.444C111.424,6.419,117.614,16.2,111.13,22.1l-.036.035c9.186,2.759,13.484,2.778,15.423-4.935,1.969-7.831-1.191-13.235-2.977-14.792"
+                                    transform="translate(-81.159 0)" fill="#8cd900" />
+                                <path
+                                    d="M13.621,22.525c-.55-2.748,7.327-6.228,7.327-6.228l.278-.113a16.268,16.268,0,0,0-5.087-.619C4.645,16.022-.361,24.435.02,29.257c.325,4.116,3.3,9.068,14.242,9.572,10.427.48,15.24-3.941,15.672-4.361l-.422-.127c-9.48-2.885-15.342-9.068-15.891-11.815"
+                                    transform="translate(0 -12.327)" fill="#08b5f7" />
+                                <path
+                                    d="M81.946,36.847c6.484-5.9.295-15.686-8.744-18.249l-.278.113S65.047,22.192,65.6,24.94s6.411,8.93,15.891,11.815l.422.127.036-.035"
+                                    transform="translate(-51.975 -14.742)" fill="#008c3e" />
+                                <path
+                                    d="M265.911,33.075c0-1.609-1.142-2.634-3.52-2.634a20.254,20.254,0,0,0-2.075.117v5.431q.909.07,2.1.07c2.518,0,3.5-1.259,3.5-2.984m2.751-.023c0,3.217-2.285,5.291-6.247,5.291-.793,0-1.468-.023-2.1-.07v5.152a6.268,6.268,0,0,1-1.329.14,6.6,6.6,0,0,1-1.329-.14V28.646a20.007,20.007,0,0,1,4.662-.513c4.429,0,6.341,1.981,6.341,4.918"
+                                    transform="translate(-204.241 -22.3)" />
+                                <path
+                                    d="M321.218,47.485a3.8,3.8,0,0,1-.7,2.284,6.621,6.621,0,0,0-1.679-.21,4.286,4.286,0,0,0-2.075.443v8.485a6.263,6.263,0,0,1-1.329.117,6.4,6.4,0,0,1-1.329-.117V48.72a7.283,7.283,0,0,1,4.662-1.585,7.046,7.046,0,0,1,2.447.35"
+                                    transform="translate(-248.987 -37.363)" />
+                                <path
+                                    d="M355.029,52.9c0-2.121-1.212-3.59-3.193-3.59s-3.194,1.469-3.194,3.59c0,2.1,1.212,3.543,3.194,3.543s3.193-1.445,3.193-3.543m-9.044,0a5.688,5.688,0,0,1,5.9-5.874,5.6,5.6,0,0,1,5.8,5.874,5.682,5.682,0,0,1-5.9,5.851,5.581,5.581,0,0,1-5.8-5.851"
+                                    transform="translate(-274.255 -37.273)" />
+                                <path
+                                    d="M412.952,48.6a41.433,41.433,0,0,1-4.289,10.863,5.884,5.884,0,0,1-1.259.117,6.32,6.32,0,0,1-1.306-.117A39.526,39.526,0,0,1,401.763,48.6a7.2,7.2,0,0,1,1.818-.233,6.982,6.982,0,0,1,1.026.093,56.654,56.654,0,0,0,2.727,8.205,2.022,2.022,0,0,1,.116.35l.14-.35a52.361,52.361,0,0,0,2.658-8.205,6.978,6.978,0,0,1,1.026-.093,5.7,5.7,0,0,1,1.678.233"
+                                    transform="translate(-318.469 -38.343)" />
+                                <path
+                                    d="M460.418,40.484V29.458a6.394,6.394,0,0,1,1.328-.117,6.176,6.176,0,0,1,1.306.117V40.484a6.057,6.057,0,0,1-1.306.117,6.55,6.55,0,0,1-1.328-.117m-.4-14.383a1.7,1.7,0,1,1,1.725,1.678,1.7,1.7,0,0,1-1.725-1.678"
+                                    transform="translate(-364.649 -19.36)" />
+                                <path
+                                    d="M489.285,40.583v-6.2a3.892,3.892,0,0,0-2.145-.489,3.317,3.317,0,0,0-3.427,3.52,3.245,3.245,0,0,0,3.38,3.52,5.768,5.768,0,0,0,2.191-.35m2.634-13.007V42.145a10.956,10.956,0,0,1-4.778,1.1c-3.637,0-6.108-2.051-6.108-5.781a5.734,5.734,0,0,1,6.014-5.9,6.093,6.093,0,0,1,2.238.35V27.576a6.044,6.044,0,0,1,1.3-.117,6.54,6.54,0,0,1,1.329.117"
+                                    transform="translate(-381.304 -21.766)" />
+                                <path
+                                    d="M547.905,52a2.471,2.471,0,0,0-2.471-2.731A2.847,2.847,0,0,0,542.614,52Zm2.494,1.748h-7.809a2.948,2.948,0,0,0,3.17,2.863,5.175,5.175,0,0,0,3.264-1.142,2.729,2.729,0,0,1,1.142,1.795,7.069,7.069,0,0,1-4.592,1.562,5.415,5.415,0,0,1-5.688-5.8,5.576,5.576,0,0,1,5.547-5.9,4.8,4.8,0,0,1,5.059,4.988,12.981,12.981,0,0,1-.094,1.636"
+                                    transform="translate(-427.957 -37.355)" />
+                                <path
+                                    d="M607.406,51.615V58.4a7.636,7.636,0,0,1-2.658,0V52.245c0-2.028-.979-2.8-2.68-2.8a5.074,5.074,0,0,0-2.448.606V58.4a7.5,7.5,0,0,1-2.634,0V48.771a8.592,8.592,0,0,1,5.291-1.748c3.567,0,5.129,2.051,5.129,4.592"
+                                    transform="translate(-473.218 -37.274)" />
+                                <path
+                                    d="M661.949,47.731a5.035,5.035,0,0,1-3.31,1.189c-2.378,0-4.126-1.072-4.126-3.73V34.77a6.415,6.415,0,0,1,1.329-.117,5.843,5.843,0,0,1,1.282.117v2.937h4.126a4.031,4.031,0,0,1,.116,1.049,4.392,4.392,0,0,1-.116,1.1h-4.126v4.732c0,1.632.769,2.051,1.865,2.051a2.863,2.863,0,0,0,1.841-.746,2.775,2.775,0,0,1,1.119,1.841"
+                                    transform="translate(-518.818 -27.469)" />
+                            </g>
+                        </g>
+                    </g>
+
+                </g>
+
+
+                <g class="data-scene2" style="opacity:0; visibility: hidden;">
+
+                    <g transform="translate(0 20)">
+                        <rect width="480" height="101" transform="translate(0 199)" fill="#fff" />
+                        <g transform="translate(0 197)">
+                            <rect width="480" height="4" fill="url(#a)" />
+
+                        </g>
+                        <text transform="translate(17 207)" font-size="10" font-family="ArialMT, Arial"
+                            letter-spacing="-0.022em">
+                            <tspan x="22.816" y="9">
+                                Rzeczywista Roczna Stopa Oprocentowania (RRSO) wynosi 29,01%, całkowita kwota kredytu
+                            </tspan>
+                            <tspan x="12.608" y="20">
+                                (bez kredytowanych kosztów) 7000 zł, całkowita kwota do zapłaty 8512,03 zł,
+                                oprocentowanie stałe
+                            </tspan>
+                            <tspan x="8.175" y="31">
+                                15%, całkowity koszt kredytu 1512,03 zł (w tym: prowizja 0 zł, opłata przygotowawcza 40
+                                zł, opłata za
+                            </tspan>
+                            <tspan x="12.213" y="42">
+                                elastyczny plan spłat 611 zł, odsetki 861,03 zł), 17 miesięcznych równych rat w
+                                wysokości 472,90 zł
+                            </tspan>
+                            <tspan x="21.389" y="53">
+                                i ostatnia, 18. rata w wysokości 472,73 zł. Kalkulacja z dnia 19.03.2025 r. na
+                                reprezentatywnym
+                            </tspan>
+                            <tspan x="150.886" y="64">
+                                przykładzie pożyczki „bezProvizji”.
+                            </tspan>
+                        </text>
+                        <g class="data-rules" transform="translate(11 282)">
+                            <rect width="2" height="458" transform="translate(458 -1) rotate(90)" />
+                            <path d="M0,0H2V458H0ZM0,0V458H2V0Z" transform="translate(458 -1) rotate(90)" />
+                            <text transform="translate(229 13)" font-size="11" font-family="Arial-BoldMT, Arial"
+                                font-weight="700">
+                                <tspan x="-53.797" y="0">
+                                    Ukryj koszt pożyczki
+                                </tspan>
+                            </text>
+                        </g>
+                    </g>
+
+
+                </g>
+
+
+            </svg>
+
+
+        </div>
+        <div class="outline"></div>
+    </a>
+</body>
+
+</html>

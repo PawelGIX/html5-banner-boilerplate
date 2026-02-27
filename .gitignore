@@ -47,4 +47,9 @@ node_modules
 
 # Ignore the build and deploy folders as this is a testing environment
 build/*
+build-*/*
 deploy/*
+deploy-*/*
+
+
+.vscode

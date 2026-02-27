@@ -1,3 +1,4 @@
+var clickTag = "";
 /**
  * Universal ClickTag
  */
@@ -22,12 +23,24 @@
     	return query_string;
     }();
 
+    var parsed = (document.location.href.split('#')[1]||'').split('&');
+    var params = parsed.reduce(function (params, param) {
+    var param = param.split('=');
+    params[param[0]] = decodeURIComponent(param.slice(1).join('='));
+    return params;
+    }, {});
+    
+
     if(window.clickTag)
         url = window.clickTag;
     else if(window.click)
         url = window.click;
     else if(window.clickTAG)
         url = window.clickTAG;
+    else if(params.clickTag)
+        url = params.clickTag;
+    else if(params.click)
+        url = params.click;
     else if(getUriParams.clicktag)
         url = getUriParams.clicktag;
     else if(getUriParams.clickTAG)
@@ -42,12 +55,16 @@
 
     document.addEventListener('DOMContentLoaded', function(e){
         if(url){
-            var a = document.createElement('a');
-            var c = document.getElementById('canvas');
-            c.wrap(a);
+            var a = document.getElementById('clicktag');
+            if(!a){
+                var a = document.createElement('a');
+                var c = document.getElementById('canvas');
+                c.wrap(a);
+            }
             a.id = 'clicktag';
             a.target = '_blank';
             a.setAttribute('href', url);
+            a.removeAttribute('onclick');
         }
 
     });
