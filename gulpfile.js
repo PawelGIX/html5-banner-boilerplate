@@ -1,4 +1,6 @@
 "use strict";
+require('dotenv').config();
+
 var argv =
         // .demand(['f'])
         require("yargs").usage("Usage: -f [string]").argv,
@@ -17,6 +19,18 @@ var argv =
     sharedPath = "src/shared/";
 
 var inlinesource = require('gulp-inline-source');
+var inlineImages = require('gulp-inline-images');
+
+var inlineImgConfig = {
+    selector: 'img[src]',
+    attribute: 'src',
+};
+
+var inlineImageConfig = {
+    selector: 'image[href]',
+    attribute: 'href',
+};
+
 // var es = require("event-stream");
 var mergeStream = require("merge-stream");
 var open = require("open")
@@ -134,18 +148,34 @@ var watchJs = gulp.series(buildJs, buildHtml, wpBuilder, cleanBuildJs, deploy, d
 
 function buildHtml(cb) {
     var folders = getFolders(foldersPath);
+    var inlineImagesEnabled = process.env.inline_images === 'true';
 
     var tasks = folders.map(function (folder) {
         console.log("Html for: " + folder);
-        // gulp.src(path.join(sharedPath, "*.html"))
-        return gulp.src(path.join('src/ads', folder, "*.html"))
+        var stream = gulp.src(path.join('src/ads', folder, "*.html"))
             .pipe(plugin.replace(/{AD_SIZE}/g, getAdsSize(folder))) // replace {ADS_SIZE}
             .pipe(plugin.replace(/{PROJECT_NAME}/g, getProjectName())) // replace {PROJECT_NAME} with folder name
             .pipe(plugin.replace(/<!--[\s\S]+?-->/g, "")) // remove comments
             .pipe(gulp.dest(path.join("build/", folder)))
-            .pipe(inlinesource())
-            .pipe(gulp.dest(path.join("build/", folder)))
+            .pipe(inlinesource());
 
+        if (inlineImagesEnabled) {
+            stream = stream.pipe(inlineImages({
+                selector: 'img[src]',
+                attribute: 'src',
+                basedir: path.join('build', folder)
+            }))
+            .pipe(plugin.replace(/src="images\/[^"]+"/g, ''))
+            .pipe(inlineImages({
+                selector: 'image[href]',
+                attribute: 'href',
+                basedir: path.join('build', folder)
+            }))
+            .pipe(plugin.replace(/href="images\/[^"]+"/g, ''))
+            .pipe(plugin.replace(/src="(data:image\/[^"]+)"/g, 'href="$1"'));
+        }
+
+        return stream.pipe(gulp.dest(path.join("build/", folder)));
     });
     return mergeStream(...tasks);
 
@@ -155,11 +185,11 @@ exports.buildHtml = buildHtml;
 
 function wpBuilder(cb) {
     var folders = getFolders(foldersPath);
+    var inlineImagesEnabled = process.env.inline_images === 'true';
 
     var tasks = folders.map(function (folder) {
         console.log("Html for WP Builder: " + folder);
-        // gulp.src(path.join(sharedPath, "*.html"))
-        return gulp.src(path.join('src/ads', folder, "*.html"))
+        var stream = gulp.src(path.join('src/ads', folder, "*.html"))
             .pipe(plugin.replace(/{AD_SIZE}/g, getAdsSize(folder))) // replace {ADS_SIZE}
             .pipe(plugin.replace(/{PROJECT_NAME}/g, getProjectName())) // replace {PROJECT_NAME} with folder name
             .pipe(plugin.replace(/<!--[\s\S]+?-->/g, "<!--.-->")) // remove comments
@@ -167,9 +197,25 @@ function wpBuilder(cb) {
             .pipe(plugin.replace(/<a id="clicktag"/g, "<div id=\"clicktag\"")) // 
             .pipe(plugin.replace(/<\/a>/g, "</div>")) // 
             .pipe(gulp.dest(path.join("build-wp-builder/", folder)))
-            .pipe(inlinesource())
-            .pipe(gulp.dest(path.join("build-wp-builder/", folder)))
+            .pipe(inlinesource());
 
+        if (inlineImagesEnabled) {
+            stream = stream.pipe(inlineImages({
+                selector: 'img[src]',
+                attribute: 'src',
+                basedir: path.join('build-wp-builder', folder)
+            }))
+            .pipe(plugin.replace(/src="images\/[^"]+"/g, ''))
+            .pipe(inlineImages({
+                selector: 'image[href]',
+                attribute: 'href',
+                basedir: path.join('build-wp-builder', folder)
+            }))
+            .pipe(plugin.replace(/href="images\/[^"]+"/g, ''))
+            .pipe(plugin.replace(/src="(data:image\/[^"]+)"/g, 'href="$1"'));
+        }
+
+        return stream.pipe(gulp.dest(path.join("build-wp-builder/", folder)));
     });
     return mergeStream(...tasks);
 
@@ -279,10 +325,15 @@ function cleanBuildJs(cb) {
     return del(["build/**/*.js", "build-wp-builder/**/*.js"]);
 };
 exports.cleanBuildJs = cleanBuildJs;
-// function cleanupInlinedScripts(cb) {
-//     return del.sync("build/**/*.*");
-// };
-// exports.cleanupInlinedScripts = cleanupInlinedScripts;
+
+function cleanInlinedImages(cb) {
+    if (process.env.inline_images !== 'true') {
+        cb();
+        return;
+    }
+    return del(["build/**/images", "build-wp-builder/**/images"]);
+};
+exports.cleanInlinedImages = cleanInlinedImages;
 
 // gulp.task('clean-deploy', function() {
 //    return del.sync('deploy/**/*.*');
@@ -362,7 +413,7 @@ function watch(cb) {
     gulp.watch("src/**/*.css", gulp.series(buildCss));
     gulp.watch(
         "src/**/*.html",
-        gulp.series(buildScripts, buildHtml, wpBuilder, cleanBuildJs, deploy, deployWpBuilder, function (cb) {
+        gulp.series(buildScripts, buildHtml, wpBuilder, cleanInlinedImages, cleanBuildJs, deploy, deployWpBuilder, function (cb) {
             browserSync.reload();
             cb();
         })
@@ -384,6 +435,7 @@ var buildAll = gulp.series(
     buildScripts,
     buildHtml,
     wpBuilder,
+    cleanInlinedImages,
     cleanBuildJs,
     deploy,
     deployWpBuilder,
