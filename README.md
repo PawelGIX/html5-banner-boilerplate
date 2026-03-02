@@ -46,3 +46,40 @@ For each different ad size, create a new folder inside the `ads` folder naming i
 
 ### Long Version
 > TO DO
+
+## .env Configuration
+
+Create a `.env` file in the project root to configure the build process. All options are optional and default to `false`.
+
+| Variable | Type | Default | Description |
+|----------|------|---------|-------------|
+| `compress_images` | boolean | false | Convert images to WebP format |
+| `image_compression` | float | 0.5 | WebP compression quality (0-1) |
+| `inline_images` | boolean | false | Inline images as base64 data URIs in HTML |
+| `inline_fonts` | boolean | false | Inline fonts as base64 data URIs |
+| `use_woff2` | boolean | false | Convert fonts to WOFF2 format (requires inline_fonts=true) |
+| `debug` | boolean | false | Skip cleanup of inlined images/fonts after build (useful for development) |
+
+### Examples
+
+#### Development (faster builds, no cleanup)
+```bash
+debug=true
+```
+
+#### Production (smaller file sizes, full cleanup)
+```bash
+compress_images=true
+image_compression=0.5
+inline_images=true
+inline_fonts=true
+use_woff2=true
+debug=false
+```
+
+### Notes
+
+- When `debug=true`, the images and fonts folders are preserved in the build directory after compilation
+- When `debug=false`, images and fonts are cleaned up after inlining (reduces file size for deployment)
+- WOFF2 fonts require `inline_fonts=true` to take effect
+- The `image_compression` value is a float between 0 (lowest quality) and 1 (highest quality)
