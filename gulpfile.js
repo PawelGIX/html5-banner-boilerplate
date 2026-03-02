@@ -276,7 +276,7 @@ exports.buildJs = buildJs;
 //     return tasks;
 // });
 
-var watchJs = gulp.series(buildJs, buildHtml, wpBuilder, cleanBuildJs, deploy, deployWpBuilder, function (cb) {
+var watchJs = gulp.series(cleanInlinedImages, cleanInlinedFonts, copySharedImages, copyImages, subsetFonts, buildJs, buildHtml, wpBuilder, cleanBuildJs, cleanInlinedImages, cleanInlinedFonts, deploy, deployWpBuilder, function (cb) {
     // TO DO:
     // Make it so it is not needed to copy all
     // external JS libraries on each reload
@@ -295,8 +295,7 @@ function buildHtml(cb) {
         var stream = gulp.src(path.join('src/ads', folder, "*.html"))
             .pipe(plugin.replace(/{AD_SIZE}/g, getAdsSize(folder))) // replace {ADS_SIZE}
             .pipe(plugin.replace(/{PROJECT_NAME}/g, getProjectName())) // replace {PROJECT_NAME} with folder name
-            .pipe(plugin.replace(/<!--[\s\S]+?-->/g, "")) // remove comments
-            .pipe(gulp.dest(path.join("build/", folder)));
+            .pipe(plugin.replace(/<!--[\s\S]+?-->/g, "")); // remove comments
         
         if (compressImages) {
             stream = stream
@@ -306,10 +305,12 @@ function buildHtml(cb) {
                 .pipe(plugin.replace(/src="images\/([^"]+)\.png"/g, 'src="images/$1.webp"'));
         }
         
-        stream = stream.pipe(inlinesource({
-            compress: true,
-            rootpath: path.join('build', folder)
-        }));
+        stream = stream
+            .pipe(gulp.dest(path.join("build/", folder)))
+            .pipe(inlinesource({
+                compress: true,
+                rootpath: path.join('build', folder)
+            }));
 
         if (inlineImagesEnabled) {
             stream = stream.pipe(inlineImages({
@@ -361,8 +362,7 @@ function wpBuilder(cb) {
             .pipe(plugin.replace(/<!--[\s\S]+?-->/g, "<!--.-->")) // remove comments
             .pipe(plugin.replace(/<script inline src="clicktag\.js"><\/script>/g, "")) // remove comments
             .pipe(plugin.replace(/<a id="clicktag"/g, "<div id=\"clicktag\"")) // 
-            .pipe(plugin.replace(/<\/a>/g, "</div>")) // 
-            .pipe(gulp.dest(path.join("build-wp-builder/", folder)));
+            .pipe(plugin.replace(/<\/a>/g, "</div>"));
         
         if (compressImages) {
             stream = stream
@@ -372,10 +372,12 @@ function wpBuilder(cb) {
                 .pipe(plugin.replace(/src="images\/([^"]+)\.png"/g, 'src="images/$1.webp"'));
         }
         
-        stream = stream.pipe(inlinesource({
-            compress: true,
-            rootpath: path.join('build-wp-builder', folder)
-        }));
+        stream = stream
+            .pipe(gulp.dest(path.join("build-wp-builder/", folder)))
+            .pipe(inlinesource({
+                compress: true,
+                rootpath: path.join('build-wp-builder', folder)
+            }));
 
         if (inlineImagesEnabled) {
             stream = stream.pipe(inlineImages({
@@ -731,7 +733,7 @@ function watch(cb) {
     gulp.watch("src/**/*.css", gulp.series(buildCss));
     gulp.watch(
         "src/**/*.html",
-        gulp.series(copySharedImages, copyImages, subsetFonts, buildScripts, buildHtml, wpBuilder, cleanInlinedImages, cleanInlinedFonts, cleanBuildJs, deploy, deployWpBuilder, function (cb) {
+        gulp.series(cleanInlinedImages, cleanInlinedFonts, copySharedImages, copyImages, subsetFonts, buildScripts, buildHtml, wpBuilder, cleanBuildJs, cleanInlinedImages, cleanInlinedFonts, deploy, deployWpBuilder, function (cb) {
             browserSync.reload();
             cb();
         })

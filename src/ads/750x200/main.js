@@ -5,33 +5,44 @@ function on(selector, eventName, eventHandler) {
 }
 
 function init() {
-    var b = gsap
-        .timeline()
-        .to(".data-btn", 0.6, {
-            scale: 1.2,
-            transformOrigin: "50%",
-            ease: "Power4.easeIn",
-        })
-        .to(".data-btn", 0.6, {
-            scale: 1,
-            transformOrigin: "50%",
-            ease: "Power4.easeOut",
-        });
-    // gsap.set(".smog",{scale:1.1, transformOrigin:"50% 50%"});
+    // var b = gsap
+    //     .timeline()
+    //     .to(".data-btn", 0.6, {
+    //         scale: 1.2,
+    //         transformOrigin: "50%",
+    //         ease: "Power4.easeIn",
+    //     })
+    //     .to(".data-btn", 0.6, {
+    //         scale: 1,
+    //         transformOrigin: "50%",
+    //         ease: "Power4.easeOut",
+    //     });
+    // // gsap.set(".smog",{scale:1.1, transformOrigin:"50% 50%"});
 
-    var t = gsap.timeline({ repeat: -1, repeatDelay: 5, delay: 0 });
-    t.from(".text", .4,{ x:"+=20", opacity: 0, ease:"Power4.easeOut", stagger: .2 },0.5); 
-    t.add(b, 2);
+    // var t = gsap.timeline({ repeat: -1, repeatDelay: 5, delay: 0 });
+    // t.from(".text", .4,{ x:"+=20", opacity: 0, ease:"Power4.easeOut", stagger: .2 },0.5);
+    // t.add(b, 2);
+
+    var MAX_ANIM_LENGTH = 25;
 
 
-
-    var slides = gsap.timeline({ repeat: 3, repeatDelay: 5, delay: 3 });
+    var slides = gsap.timeline({ repeat: -1, repeatDelay: 5, delay: 3 });
     // slides.to(".data-slide-1", 0.2, { autoAlpha: 0, scale:.95, transformOrigin: "50%", });
     slides.fromTo(".data-slide-2", 0.2,{ autoAlpha:0, scale:.95, transformOrigin: "50%", }, { autoAlpha: 1, scale:1, transformOrigin: "50%", }, 0);
-    slides.to(".data-slide-2", 0.2, { autoAlpha: 0, scale:.95, transformOrigin: "50%", }, 5);
+    slides.to(".data-slide-2", 0.2, { autoAlpha: 0, scale: .95, transformOrigin: "50%", }, 5);
     // slides.to(".data-slide-1", 0.2, { autoAlpha: 1, scale:1, transformOrigin: "50%", }, 5);
-   
     
+    
+    // arrows
+    var arrows = gsap.timeline({ repeat: -1, repeatDelay: 0 });
+    arrows.to(".data-arrow", 0.4, { x:"-=10px", ease:"Sine.easeIn" });
+    arrows.to(".data-arrow", 0.4, { x: "+=10px", ease: "Sine.easeOut" });
+    
+    gsap.delayedCall(MAX_ANIM_LENGTH, function () {
+        arrows.revert();
+        slides.revert();
+    });
+
 
     var scene = gsap.timeline({ paused: true });
     // scene.to(".data-scene1", 0.2, { opacity: 0 });
