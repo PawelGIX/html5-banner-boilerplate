@@ -20,6 +20,8 @@ var argv =
 
 var inlinesource = require('gulp-inline-source');
 var inlineImages = require('gulp-inline-images');
+var subsetFont = require('subset-font');
+var sharp = require('sharp');
 
 var inlineImgConfig = {
     selector: 'img[src]',
@@ -31,16 +33,103 @@ var inlineImageConfig = {
     attribute: 'href',
 };
 
+function subsetFonts(cb) {
+    var folders = getFolders(foldersPath);
+    var inlineFontsEnabled = process.env.inline_fonts === 'true';
+    
+    if (!inlineFontsEnabled) {
+        cb();
+        return;
+    }
+    
+    var targetText = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()ąćęłńóśźżĄĆĘŁŃÓŚŹŻ';
+    
+    var allPromises = [];
+    var fontBase64Map = {};
+    
+    folders.forEach(function (folder) {
+        var srcDir = path.join(foldersPath, folder, "fonts");
+        var destDir = path.join("build", folder, "fonts");
+        var destDirWp = path.join("build-wp-builder", folder, "fonts");
+        
+        if (!fileSystem.existsSync(srcDir)) {
+            return;
+        }
+        
+        if (!fileSystem.existsSync(destDir)) {
+            fileSystem.mkdirSync(destDir, { recursive: true });
+        }
+        if (!fileSystem.existsSync(destDirWp)) {
+            fileSystem.mkdirSync(destDirWp, { recursive: true });
+        }
+        
+        var files = fileSystem.readdirSync(srcDir);
+        var fontBase64 = {};
+        fontBase64Map[folder] = fontBase64;
+        
+        files.forEach(function (file) {
+            var srcFile = path.join(srcDir, file);
+            var destFile = path.join(destDir, file);
+            var destFileWp = path.join(destDirWp, file);
+            
+            if (file.endsWith('.ttf')) {
+                var promise = (async function() {
+                    try {
+                        var fontData = fileSystem.readFileSync(srcFile);
+                        var subsetBuffer = await subsetFont(fontData, targetText);
+                        fontBase64[file] = 'data:font/ttf;base64,' + subsetBuffer.toString('base64');
+                        fileSystem.writeFileSync(destFile, subsetBuffer);
+                        fileSystem.writeFileSync(destFileWp, subsetBuffer);
+                    } catch (err) {
+                        console.log('subset-font error for ' + file + ': ' + err.message);
+                        fileSystem.copyFileSync(srcFile, destFile);
+                        fileSystem.copyFileSync(srcFile, destFileWp);
+                    }
+                })();
+                allPromises.push(promise);
+            } else if (file.endsWith('.css')) {
+                fontBase64._cssFile = srcFile;
+                fontBase64._destFile = destFile;
+                fontBase64._destFileWp = destFileWp;
+            } else {
+                fileSystem.copyFileSync(srcFile, destFile);
+                fileSystem.copyFileSync(srcFile, destFileWp);
+            }
+        });
+    });
+    
+    Promise.all(allPromises).then(function() {
+        folders.forEach(function (folder) {
+            var fontBase64 = fontBase64Map[folder];
+            if (fontBase64 && fontBase64._cssFile) {
+                var cssContent = fileSystem.readFileSync(fontBase64._cssFile, 'utf8');
+                Object.keys(fontBase64).forEach(function (fontFile) {
+                    if (fontFile === '_cssFile' || fontFile === '_destFile' || fontFile === '_destFileWp') return;
+                    var escapedFontFile = fontFile.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                    cssContent = cssContent.replace(
+                        new RegExp('url\\([^)]*' + escapedFontFile + '[^)]*\\)', 'gi'),
+                        'url(' + fontBase64[fontFile] + ')'
+                    );
+                });
+                fileSystem.writeFileSync(fontBase64._destFile, cssContent);
+                fileSystem.writeFileSync(fontBase64._destFileWp, cssContent);
+            }
+        });
+        cb();
+    });
+}
+exports.subsetFonts = subsetFonts;
+
 // var es = require("event-stream");
 var mergeStream = require("merge-stream");
-var open = require("open")
+var open = require("open").default;
 const fileSync = require("gulp-file-sync");
 var DISCLAIMER = require("./" + sharedPath + "disclaimer.txt");
 
 gutil.log(DISCLAIMER);
 
 
-open('https://h5validator.appspot.com/dcm/asset');
+// open('https://h5validator.appspot.com/dcm/asset');
 // open("https://codebeautify.org/xmlvalidator");
 
 
@@ -100,25 +189,31 @@ exports.copyLibs = copyLibs;
 
 var buildJs = function (cb) {
     var folders = getFolders(foldersPath);
+    var fileSystem = require("fs");
 
     var tasks = folders.map(function (folder) {
+        var srcFiles = [path.join(sharedPath, "/js/*.js")];
+        var folderJs = path.join(foldersPath, folder, "*.js");
+        
+        // Check if folder JS exists
+        var folderJsDir = path.join(foldersPath, folder);
+        if (fileSystem.existsSync(folderJsDir)) {
+            var files = fileSystem.readdirSync(folderJsDir).filter(f => f.endsWith('.js'));
+            if (files.length > 0) {
+                srcFiles.push(folderJs);
+            }
+        }
+        
         return (
             gulp
-                .src([
-                    path.join(sharedPath, "/js/*.js"),
-                    path.join(foldersPath, folder, "*.js"),
-                ])
-                // .pipe(plugin.concat("main.js"))
-                .pipe(plugin.replace(/{DISCLAIMER}/g, DISCLAIMER)) // replace {DISCLAIMER} with disclaimer.txt
-                // TO DO: move the minifying to a deploy task
-                // .pipe(plugin.uglify())
+                .src(srcFiles, { allowEmpty: true })
+                .pipe(plugin.replace(/{DISCLAIMER}/g, DISCLAIMER))
                 .pipe(gulp.dest(path.join("build/", folder)))
                 .pipe(gulp.dest(path.join("build-wp-builder/", folder)))
         );
     });
 
     return mergeStream(tasks);
-    cb();
 };
 exports.buildJs = buildJs;
 
@@ -149,6 +244,8 @@ var watchJs = gulp.series(buildJs, buildHtml, wpBuilder, cleanBuildJs, deploy, d
 function buildHtml(cb) {
     var folders = getFolders(foldersPath);
     var inlineImagesEnabled = process.env.inline_images === 'true';
+    var inlineFontsEnabled = process.env.inline_fonts === 'true';
+    var compressImages = process.env.compress_images === 'true';
 
     var tasks = folders.map(function (folder) {
         console.log("Html for: " + folder);
@@ -156,8 +253,20 @@ function buildHtml(cb) {
             .pipe(plugin.replace(/{AD_SIZE}/g, getAdsSize(folder))) // replace {ADS_SIZE}
             .pipe(plugin.replace(/{PROJECT_NAME}/g, getProjectName())) // replace {PROJECT_NAME} with folder name
             .pipe(plugin.replace(/<!--[\s\S]+?-->/g, "")) // remove comments
-            .pipe(gulp.dest(path.join("build/", folder)))
-            .pipe(inlinesource());
+            .pipe(gulp.dest(path.join("build/", folder)));
+        
+        if (compressImages) {
+            stream = stream
+                .pipe(plugin.replace(/href="images\/([^"]+)\.jpg"/g, 'href="images/$1.webp"'))
+                .pipe(plugin.replace(/href="images\/([^"]+)\.png"/g, 'href="images/$1.webp"'))
+                .pipe(plugin.replace(/src="images\/([^"]+)\.jpg"/g, 'src="images/$1.webp"'))
+                .pipe(plugin.replace(/src="images\/([^"]+)\.png"/g, 'src="images/$1.webp"'));
+        }
+        
+        stream = stream.pipe(inlinesource({
+            compress: true,
+            rootpath: path.join('build', folder)
+        }));
 
         if (inlineImagesEnabled) {
             stream = stream.pipe(inlineImages({
@@ -175,6 +284,18 @@ function buildHtml(cb) {
             .pipe(plugin.replace(/src="(data:image\/[^"]+)"/g, 'href="$1"'));
         }
 
+        if (inlineFontsEnabled) {
+            var fontsDir = path.join('build', folder, 'fonts');
+            var fontCssFile = path.join(fontsDir, 'fonts.css');
+            var fileSystem = require("fs");
+            if (fileSystem.existsSync(fontsDir) && fileSystem.existsSync(fontCssFile)) {
+                stream = stream.pipe(inlinesource({
+                    compress: true,
+                    rootpath: fontsDir
+                }));
+            }
+        }
+
         return stream.pipe(gulp.dest(path.join("build/", folder)));
     });
     return mergeStream(...tasks);
@@ -186,6 +307,8 @@ exports.buildHtml = buildHtml;
 function wpBuilder(cb) {
     var folders = getFolders(foldersPath);
     var inlineImagesEnabled = process.env.inline_images === 'true';
+    var inlineFontsEnabled = process.env.inline_fonts === 'true';
+    var compressImages = process.env.compress_images === 'true';
 
     var tasks = folders.map(function (folder) {
         console.log("Html for WP Builder: " + folder);
@@ -196,8 +319,20 @@ function wpBuilder(cb) {
             .pipe(plugin.replace(/<script inline src="clicktag\.js"><\/script>/g, "")) // remove comments
             .pipe(plugin.replace(/<a id="clicktag"/g, "<div id=\"clicktag\"")) // 
             .pipe(plugin.replace(/<\/a>/g, "</div>")) // 
-            .pipe(gulp.dest(path.join("build-wp-builder/", folder)))
-            .pipe(inlinesource());
+            .pipe(gulp.dest(path.join("build-wp-builder/", folder)));
+        
+        if (compressImages) {
+            stream = stream
+                .pipe(plugin.replace(/href="images\/([^"]+)\.jpg"/g, 'href="images/$1.webp"'))
+                .pipe(plugin.replace(/href="images\/([^"]+)\.png"/g, 'href="images/$1.webp"'))
+                .pipe(plugin.replace(/src="images\/([^"]+)\.jpg"/g, 'src="images/$1.webp"'))
+                .pipe(plugin.replace(/src="images\/([^"]+)\.png"/g, 'src="images/$1.webp"'));
+        }
+        
+        stream = stream.pipe(inlinesource({
+            compress: true,
+            rootpath: path.join('build-wp-builder', folder)
+        }));
 
         if (inlineImagesEnabled) {
             stream = stream.pipe(inlineImages({
@@ -213,6 +348,18 @@ function wpBuilder(cb) {
             }))
             .pipe(plugin.replace(/href="images\/[^"]+"/g, ''))
             .pipe(plugin.replace(/src="(data:image\/[^"]+)"/g, 'href="$1"'));
+        }
+
+        if (inlineFontsEnabled) {
+            var fontsDir = path.join('build-wp-builder', folder, 'fonts');
+            var fontCssFile = path.join(fontsDir, 'fonts.css');
+            var fileSystem = require("fs");
+            if (fileSystem.existsSync(fontsDir) && fileSystem.existsSync(fontCssFile)) {
+                stream = stream.pipe(inlinesource({
+                    compress: true,
+                    rootpath: fontsDir
+                }));
+            }
         }
 
         return stream.pipe(gulp.dest(path.join("build-wp-builder/", folder)));
@@ -240,22 +387,34 @@ exports.wpBuilder = wpBuilder;
 
 function buildCss(cb) {
     var folders = getFolders(foldersPath);
+    var fileSystem = require("fs");
+    var path = require("path");
 
     var tasks = folders.map(function (folder) {
-        console.log(sharedPath);
+        var sharedCss = path.join(sharedPath, "css/*.css");
+        var folderCss = path.join(foldersPath, folder, "css/*.css");
+        
+        // Check if folder css exists
+        var folderCssExists = fileSystem.existsSync(path.join(foldersPath, folder, "css"));
+        
+        var srcFiles = [sharedCss];
+        if (folderCssExists) {
+            srcFiles.push(folderCss);
+        }
+        
+        if (srcFiles.length === 0) {
+            return;
+        }
+        
         return (
             gulp
-                .src([
-                    path.join(sharedPath, "css/*.css"),
-                    path.join(foldersPath, folder, "css/*.css"),
-                ])
+                .src(srcFiles, { allowEmpty: true })
                 .pipe(plugin.concat("styles.css"))
                 .pipe(
                     plugin.autoprefixer({
                         browsers: ["last 2 versions"],
                     })
                 )
-                // TO DO: Move the minifying to a deploy task
                 .pipe(plugin.cssnano())
                 .pipe(gulp.dest(path.join("build/", folder, "css")))
                 .pipe(browserSync.stream())
@@ -269,30 +428,129 @@ exports.buildCss = buildCss;
 
 function copySharedImages(cb) {
     var folders = getFolders(foldersPath);
-
-    var tasks = folders.map(function (folder) {
-        return gulp
-            .src(path.join(sharedPath, "images/*.*"))
-            .pipe(gulp.dest(path.join("build", folder, "images")))
-            .pipe(gulp.dest(path.join("build-wp-builder", folder, "images")));
+    var fileSystem = require("fs");
+    var compressImages = process.env.compress_images === 'true';
+    var compression = parseFloat(process.env.image_compression || '0.5');
+    
+    var allPromises = [];
+    
+    folders.forEach(function (folder) {
+        var srcDir = path.join(sharedPath, "images");
+        var destDir = path.join("build", folder, "images");
+        var destDirWp = path.join("build-wp-builder", folder, "images");
+        
+        if (!fileSystem.existsSync(srcDir)) {
+            return;
+        }
+        
+        if (!fileSystem.existsSync(destDir)) {
+            fileSystem.mkdirSync(destDir, { recursive: true });
+        }
+        if (!fileSystem.existsSync(destDirWp)) {
+            fileSystem.mkdirSync(destDirWp, { recursive: true });
+        }
+        
+        var files = fileSystem.readdirSync(srcDir);
+        files.forEach(function (file) {
+            if (file.endsWith('.DS_Store')) return;
+            
+            var srcFile = path.join(srcDir, file);
+            var ext = path.extname(file).toLowerCase();
+            var baseName = path.basename(file, ext);
+            var destFile = path.join(destDir, baseName + '.webp');
+            var destFileWp = path.join(destDirWp, baseName + '.webp');
+            
+            if (compressImages && ['.jpg', '.jpeg', '.png'].includes(ext)) {
+                var promise = sharp(srcFile)
+                    .webp({ quality: Math.round(compression * 100) })
+                    .toFile(destFile)
+                    .then(() => sharp(srcFile)
+                        .webp({ quality: Math.round(compression * 100) })
+                        .toFile(destFileWp))
+                    .catch(err => {
+                        console.log('Shared image compression error for ' + file + ': ' + err.message);
+                        fileSystem.copyFileSync(srcFile, path.join(destDir, file));
+                        fileSystem.copyFileSync(srcFile, path.join(destDirWp, file));
+                    });
+                allPromises.push(promise);
+            } else {
+                fileSystem.copyFileSync(srcFile, path.join(destDir, file));
+                fileSystem.copyFileSync(srcFile, path.join(destDirWp, file));
+            }
+        });
     });
-    return mergeStream(tasks);
-    cb();
+    
+    if (allPromises.length > 0) {
+        Promise.all(allPromises).then(() => cb()).catch(err => { console.log(err); cb(); });
+    } else {
+        cb();
+    };
 }
 exports.copySharedImages = copySharedImages;
 
 function copyImages(cb) {
     var folders = getFolders(foldersPath);
-
-    var tasks = folders.map(function (folder) {
-        return gulp
-            .src(path.join(foldersPath, folder, "images/*.*"))
-            .pipe(gulp.dest(path.join("build", folder, "images")))
-            .pipe(gulp.dest(path.join("build-wp-builder", folder, "images")));
+    var fileSystem = require("fs");
+    var compressImages = process.env.compress_images === 'true';
+    var compression = parseFloat(process.env.image_compression || '0.5');
+    
+    var allPromises = [];
+    
+    folders.forEach(function (folder) {
+        var srcDir = path.join(foldersPath, folder, "images");
+        var destDir = path.join("build", folder, "images");
+        var destDirWp = path.join("build-wp-builder", folder, "images");
+        
+        if (!fileSystem.existsSync(srcDir)) {
+            return;
+        }
+        
+        if (!fileSystem.existsSync(destDir)) {
+            fileSystem.mkdirSync(destDir, { recursive: true });
+        }
+        if (!fileSystem.existsSync(destDirWp)) {
+            fileSystem.mkdirSync(destDirWp, { recursive: true });
+        }
+        
+        var files = fileSystem.readdirSync(srcDir);
+        files.forEach(function (file) {
+            if (file.endsWith('.DS_Store')) return;
+            
+            var srcFile = path.join(srcDir, file);
+            var ext = path.extname(file).toLowerCase();
+            var baseName = path.basename(file, ext);
+            var destFile = path.join(destDir, baseName + '.webp');
+            var destFileWp = path.join(destDirWp, baseName + '.webp');
+            
+            if (compressImages && ['.jpg', '.jpeg', '.png'].includes(ext)) {
+                var promise = sharp(srcFile)
+                    .webp({ quality: Math.round(compression * 100) })
+                    .toFile(destFile)
+                    .then(() => sharp(srcFile)
+                        .webp({ quality: Math.round(compression * 100) })
+                        .toFile(destFileWp))
+                    .catch(err => {
+                        console.log('Image compression error for ' + file + ': ' + err.message);
+                        var origDest = path.join(destDir, file);
+                        var origDestWp = path.join(destDirWp, file);
+                        fileSystem.copyFileSync(srcFile, origDest);
+                        fileSystem.copyFileSync(srcFile, origDestWp);
+                    });
+                allPromises.push(promise);
+            } else {
+                var destOrig = path.join(destDir, file);
+                var destOrigWp = path.join(destDirWp, file);
+                fileSystem.copyFileSync(srcFile, destOrig);
+                fileSystem.copyFileSync(srcFile, destOrigWp);
+            }
+        });
     });
-
-    return mergeStream(tasks);
-    cb();
+    
+    if (allPromises.length > 0) {
+        Promise.all(allPromises).then(() => cb()).catch(err => { console.log(err); cb(); });
+    } else {
+        cb();
+    }
 };
 exports.copyImages = copyImages;
 
@@ -331,9 +589,26 @@ function cleanInlinedImages(cb) {
         cb();
         return;
     }
+    if (process.env.debug === 'true') {
+        cb();
+        return;
+    }
     return del(["build/**/images", "build-wp-builder/**/images"]);
 };
 exports.cleanInlinedImages = cleanInlinedImages;
+
+function cleanInlinedFonts(cb) {
+    if (process.env.inline_fonts !== 'true') {
+        cb();
+        return;
+    }
+    if (process.env.debug === 'true') {
+        cb();
+        return;
+    }
+    return del(["build/**/fonts", "build-wp-builder/**/fonts"]);
+};
+exports.cleanInlinedFonts = cleanInlinedFonts;
 
 // gulp.task('clean-deploy', function() {
 //    return del.sync('deploy/**/*.*');
@@ -413,7 +688,7 @@ function watch(cb) {
     gulp.watch("src/**/*.css", gulp.series(buildCss));
     gulp.watch(
         "src/**/*.html",
-        gulp.series(buildScripts, buildHtml, wpBuilder, cleanInlinedImages, cleanBuildJs, deploy, deployWpBuilder, function (cb) {
+        gulp.series(copySharedImages, copyImages, subsetFonts, buildScripts, buildHtml, wpBuilder, cleanInlinedImages, cleanInlinedFonts, cleanBuildJs, deploy, deployWpBuilder, function (cb) {
             browserSync.reload();
             cb();
         })
@@ -431,11 +706,13 @@ var buildAll = gulp.series(
     cleanBuild,
     copySharedImages,
     copyImages,
+    subsetFonts,
     buildCss,
     buildScripts,
     buildHtml,
     wpBuilder,
     cleanInlinedImages,
+    cleanInlinedFonts,
     cleanBuildJs,
     deploy,
     deployWpBuilder,
