@@ -26,10 +26,10 @@ function init() {
 
 
     var slides = gsap.timeline({ repeat: 3, repeatDelay: 5, delay: 3 });
-    slides.to(".data-slide-1", 0.2, { autoAlpha: 0, scale:.95, transformOrigin: "50%", });
+    // slides.to(".data-slide-1", 0.2, { autoAlpha: 0, scale:.95, transformOrigin: "50%", });
     slides.fromTo(".data-slide-2", 0.2,{ autoAlpha:0, scale:.95, transformOrigin: "50%", }, { autoAlpha: 1, scale:1, transformOrigin: "50%", }, 0);
-    slides.to(".data-slide-2", 0.2, { autoAlpha: 0, scale:.95, transformOrigin: "50%", }, 3);
-    slides.to(".data-slide-1", 0.2, { autoAlpha: 1, scale:1, transformOrigin: "50%", }, 3);
+    slides.to(".data-slide-2", 0.2, { autoAlpha: 0, scale:.95, transformOrigin: "50%", }, 5);
+    // slides.to(".data-slide-1", 0.2, { autoAlpha: 1, scale:1, transformOrigin: "50%", }, 5);
    
     
 

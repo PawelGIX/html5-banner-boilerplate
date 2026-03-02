@@ -22,6 +22,9 @@ var inlinesource = require('gulp-inline-source');
 var inlineImages = require('gulp-inline-images');
 var subsetFont = require('subset-font');
 var sharp = require('sharp');
+var fonteditor = require('fonteditor-core');
+
+var woff2Initialized = false;
 
 var inlineImgConfig = {
     selector: 'img[src]',
@@ -36,9 +39,18 @@ var inlineImageConfig = {
 function subsetFonts(cb) {
     var folders = getFolders(foldersPath);
     var inlineFontsEnabled = process.env.inline_fonts === 'true';
+    var useWoff2 = process.env.use_woff2 === 'true';
     
     if (!inlineFontsEnabled) {
         cb();
+        return;
+    }
+    
+    if (useWoff2 && !woff2Initialized) {
+        fonteditor.woff2.init().then(() => {
+            woff2Initialized = true;
+            subsetFonts(cb);
+        });
         return;
     }
     
@@ -77,9 +89,24 @@ function subsetFonts(cb) {
                     try {
                         var fontData = fileSystem.readFileSync(srcFile);
                         var subsetBuffer = await subsetFont(fontData, targetText);
-                        fontBase64[file] = 'data:font/ttf;base64,' + subsetBuffer.toString('base64');
-                        fileSystem.writeFileSync(destFile, subsetBuffer);
-                        fileSystem.writeFileSync(destFileWp, subsetBuffer);
+                        
+                        if (useWoff2) {
+                            var woff2ArrayBuffer = fonteditor.ttftowoff2(subsetBuffer);
+                            var woff2Buffer = Buffer.from(woff2ArrayBuffer);
+                            var base64 = woff2Buffer.toString('base64');
+                            var woff2File = file.replace('.ttf', '.woff2');
+                            fontBase64[file] = {
+                                woff2: 'data:font/woff2;base64,' + base64,
+                                ttf: 'data:font/ttf;base64,' + subsetBuffer.toString('base64'),
+                                woff2File: woff2File
+                            };
+                            fileSystem.writeFileSync(path.join(destDir, woff2File), woff2Buffer);
+                            fileSystem.writeFileSync(path.join(destDirWp, woff2File), woff2Buffer);
+                        } else {
+                            fontBase64[file] = 'data:font/ttf;base64,' + subsetBuffer.toString('base64');
+                            fileSystem.writeFileSync(destFile, subsetBuffer);
+                            fileSystem.writeFileSync(destFileWp, subsetBuffer);
+                        }
                     } catch (err) {
                         console.log('subset-font error for ' + file + ': ' + err.message);
                         fileSystem.copyFileSync(srcFile, destFile);
@@ -105,11 +132,27 @@ function subsetFonts(cb) {
                 var cssContent = fileSystem.readFileSync(fontBase64._cssFile, 'utf8');
                 Object.keys(fontBase64).forEach(function (fontFile) {
                     if (fontFile === '_cssFile' || fontFile === '_destFile' || fontFile === '_destFileWp') return;
-                    var escapedFontFile = fontFile.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-                    cssContent = cssContent.replace(
-                        new RegExp('url\\([^)]*' + escapedFontFile + '[^)]*\\)', 'gi'),
-                        'url(' + fontBase64[fontFile] + ')'
-                    );
+                    
+                    var fontData = fontBase64[fontFile];
+                    if (useWoff2 && typeof fontData === 'object' && fontData.woff2) {
+                        var escapedFontFile = fontFile.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                        var woff2File = fontData.woff2File;
+                        var escapedWoff2File = woff2File.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                        cssContent = cssContent.replace(
+                            new RegExp('url\\([^)]*' + escapedFontFile + '[^)]*\\)', 'gi'),
+                            'url(' + fontData.woff2 + ')'
+                        );
+                        cssContent = cssContent.replace(
+                            new RegExp('format\\s*\\(\\s*[\'"]?truetype[\'"]?\\s*\\)'),
+                            'format(\'woff2\')'
+                        );
+                    } else if (typeof fontData === 'string') {
+                        var escapedFontFile = fontFile.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                        cssContent = cssContent.replace(
+                            new RegExp('url\\([^)]*' + escapedFontFile + '[^)]*\\)', 'gi'),
+                            'url(' + fontData + ')'
+                        );
+                    }
                 });
                 fileSystem.writeFileSync(fontBase64._destFile, cssContent);
                 fileSystem.writeFileSync(fontBase64._destFileWp, cssContent);

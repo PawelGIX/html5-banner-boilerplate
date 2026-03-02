@@ -30,6 +30,7 @@
         "path": "^0.12.7",
         "sharp": "^0.33.5",
         "subset-font": "^1.0.0",
+        "fonteditor-core": "^2.1.4",
         "yargs": "^17.7.2"
     },
     "scripts": {
