@@ -35,8 +35,8 @@ function init() {
     
     // arrows
     var arrows = gsap.timeline({ repeat: -1, repeatDelay: 0 });
-    arrows.to(".data-arrow", 0.4, { x:"-=10px", ease:"Sine.easeIn" });
-    arrows.to(".data-arrow", 0.4, { x: "+=10px", ease: "Sine.easeOut" });
+    arrows.to(".data-arrow", .8, { x:"-=10px", ease:"Sine.easeIn" });
+    arrows.to(".data-arrow", .8, { x: "+=10px", ease: "Sine.easeOut" });
     
     gsap.delayedCall(MAX_ANIM_LENGTH, function () {
         arrows.revert();
