@@ -17,9 +17,10 @@ function getDirectorySize($dir)
 $sortedDirectories = ['square' => [], 'tall' => [], 'wide' => []];
 foreach ($directories as $dir) {
     $dirName = basename($dir);
-    if (preg_match('/^(\d+)x(\d+)$/', $dirName, $matches)) {
+    if (preg_match('/^(\d+)x(\d+)(.+?)*$/', $dirName, $matches)) {
         $width = (int) $matches[1];
         $height = (int) $matches[2];
+
         $aspectRatio = $width / $height;
         $size = getDirectorySize($dir);
 
