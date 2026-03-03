@@ -23,7 +23,7 @@ function init() {
     // t.from(".text", .4,{ x:"+=20", opacity: 0, ease:"Power4.easeOut", stagger: .2 },0.5);
     // t.add(b, 2);
 
-    var MAX_ANIM_LENGTH = 25;
+    var MAX_ANIM_LENGTH = 27;
 
 
     var slides = gsap.timeline({ repeat: -1, repeatDelay: 5, delay: 3 });

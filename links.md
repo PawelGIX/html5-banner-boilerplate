@@ -1,6 +1,6 @@
 Bannerki
-https://oneplusone.pl/provident/banners/PROV-382_ProviSmartPromocja1000zl_pefo_text/
+https://oneplusone.pl/MichaelStorm/banners/MS-Banery_MS_BEST-03.26-kampania/
 
 Download:
-https://oneplusone.pl/provident/banners/PROV-382_ProviSmartPromocja1000zl_pefo_text/deploy/
-https://oneplusone.pl/provident/banners/PROV-382_ProviSmartPromocja1000zl_pefo_text/deploy-wp-builder/
+https://oneplusone.pl/MichaelStorm/banners/MS-Banery_MS_BEST-03.26-kampania/deploy/
+https://oneplusone.pl/MichaelStorm/banners/MS-Banery_MS_BEST-03.26-kampania/deploy-wp-builder/
