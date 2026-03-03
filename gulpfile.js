@@ -308,7 +308,7 @@ function buildHtml(cb) {
         stream = stream
             .pipe(gulp.dest(path.join("build/", folder)))
             .pipe(inlinesource({
-                compress: true,
+                compress: false,
                 rootpath: path.join('build', folder)
             }));
 

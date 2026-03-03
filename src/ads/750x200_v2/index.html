@@ -72,7 +72,7 @@
         .data-btn {
             overflow: hidden;
         }
- 
+
         .data-btn:hover path,
         .data-btn:hover rect {
             /* lighten 50% */
@@ -146,26 +146,98 @@
             border-color: #fff;
         }
 
-        .d-bar {
-            height: 3px;
-            width: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 3;
+        .liquid-btn {
+            position: relative;
+            padding: 8px 15px 6px;
+            font-size: 13px;
+            color: white;
+            background: #2F24FF;
+            border: none;
 
-            background: linear-gradient(to right,
-                    #08b5f7 0%,
-                    #08b5f7 0.4%,
-                    #04a19b 30.1%,
-                    #008c3e 49.9%,
-                    #8cd900 99.4%,
-                    #8cd900 100%);
+            cursor: pointer;
+            /* overflow: hidden; */
+            z-index: 1;
         }
 
-        /* .smog {
-            filter: url("#turbulence");
-        } */
+        .liquid-btn span {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 5px;
+            letter-spacing: .05em;
+
+        }
+
+        .liquid-btn span svg {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translate(0, -50%)
+        }
+
+        .liquid-btn::before {
+            content: "";
+            position: absolute;
+            inset: -1px;
+
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%),
+                    #ffffff4d 0%,
+                    #cadbff2e 25%,
+                    transparent 60%);
+            transition: opacity 0.2s ease;
+            opacity: 0;
+        }
+
+        .liquid-btn:hover::before {
+            opacity: 1;
+        }
+
+        .liquid-btn::after {
+            content: "";
+            position: absolute;
+            inset: -2px;
+            border-radius: 16px;
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%),
+                    rgba(59, 130, 246, 0.6),
+                    transparent 70%);
+            filter: blur(20px);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .liquid-btn:hover::after {
+            opacity: 1;
+        }
+
+        .btn-pulsing {
+            animation: pulse 2s infinite;
+        }
+
+        .btn-pulsing:hover {
+            animation: none;
+        }
+
+        html.stopped .btn-pulsing {
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
     </style>
 
 </head>
@@ -176,6 +248,8 @@
             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="750" height="200"
                 viewBox="0 0 750 200" preserveAspectRatio="xMinYMin meet">
                 <defs>
+
+
 
                 </defs>
                 <image width="750" height="200" href="images/f.jpg" />
@@ -212,7 +286,7 @@
                             (WIBOR 3M + 3,10 – 3,50 p.p.*)
                         </tspan>
                     </text>
-                    <g class="data-btn" transform="translate(-220 -56.997)">
+                    <!-- <g class="data-btn" transform="translate(-220 -56.997)">
                         <path d="M0,0H262.055V26.5H0Z" transform="translate(298 163)" fill="#30f" />
                         <text transform="translate(429 181.221)" fill="#fff" font-size="13"
                             font-family="Montserrat-SemiBold, Montserrat" font-weight="600">
@@ -225,7 +299,7 @@
                                 d="M-2605.244,737.212a.648.648,0,0,1-.466-.2.65.65,0,0,1,.013-.919l3.667-3.564-3.672-3.65a.65.65,0,0,1,0-.919.65.65,0,0,1,.919,0l4.141,4.116a.65.65,0,0,1,.192.465.65.65,0,0,1-.2.462l-4.141,4.025A.648.648,0,0,1-2605.244,737.212Z"
                                 transform="translate(3151.238 -556.124)" fill="#fff" />
                         </g>
-                    </g>
+                    </g> -->
                 </g>
                 <g class="data-slide-2" style="opacity:0; visibility: hidden;">
                     <rect width="750" height="200" fill="#001e5f" />
@@ -289,7 +363,18 @@
 
 
             </svg>
-
+            <div class="data-slide-1" style="position: absolute;top: 0;left: 0;">
+                <button class="liquid-btn btn-pulsing"
+                    style="position: absolute; top: 105px; left: 78px; transform-origin: center; width: 261px;">
+                    <span>
+                        SPRAWDŹ SZCZEGÓŁY
+                        <svg width="10" height="10" class="icon" viewBox="0 0 12 12">
+                            <path d="M1 1l5 5-5 5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                </button>
+            </div>
 
         </div>
         <div class="outline"></div>
