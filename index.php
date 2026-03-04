@@ -128,7 +128,7 @@ unset($group);
                     <h3><?php echo htmlspecialchars($dir['name']); ?> (<?php echo $dir['size']; ?> KB)</h3>
                     <div class="download-buttons">
                         <?php foreach ($deployDirs as $deployDir): ?>
-                            <?php $zipPath = $deployDir . "PROV-382_ProviSmartPromocja1000zl_pefo_text-" . $dir['name'] . ".zip"; ?>
+                            <?php $zipPath = $deployDir . "/" . $parentDirname . "-" . $dir['name'] . ".zip"; ?>
                             <?php if (file_exists($zipPath)): ?>
                                 <a href="<?php echo htmlspecialchars($zipPath); ?>" download>Download from
                                     <?php echo htmlspecialchars(basename($deployDir)); ?></a>
