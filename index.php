@@ -50,9 +50,15 @@ unset($group);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $parentDirname; ?></title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
+
+
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Google Sans Code', Arial, sans-serif;
         }
 
         #searchBar {
@@ -82,6 +88,7 @@ unset($group);
         .box h3 {
             text-align: left;
             margin-bottom: .1em;
+            font-weight: 300;
         }
 
         .download-buttons {
@@ -89,21 +96,35 @@ unset($group);
         }
 
         .download-buttons a {
-            margin: 10px 1px;
-            display: inline-block;
-            text-decoration: none;
-            background-image: linear-gradient(to top, #555 70%, #888);
-            border: 1px solid #555;
-            border-radius: 4px;
-            padding: .5em 1em;
-
-            color: #fff;
+            padding: 0 10px;
+            min-height: 25px;
+            display: inline-flex;
+            align-items: center;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, .9);
+            color: #333;
+            margin-bottom: 5px;
+            border: 1px solid #d5d5d5;
+            border-radius: 3px;
+            
+            font-weight: normal;
             font-size: 11px;
+            line-height: 1;
+            
+            background: #fff;
+            background-color: #eee;
+            text-decoration: none;
+            
         }
 
         /* add hover  */
         .download-buttons a:hover {
-            background-image: linear-gradient(to top, #666 70%, #999);
+            border-color:  #aaa;
+        }
+        .download-buttons a:active {
+            background-image: linear-gradient(to top, #ddd 10%, #eee);
+            box-shadow: inset hsl(0, 0%, 50%) 2px 2px 3px 0px;
+            
+
         }
     </style>
     <script>
